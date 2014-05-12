@@ -1,0 +1,100 @@
+/* tags */
+
+body {
+    background-color:black;
+    color:white;
+    font-family:sans-serif;
+}
+
+h1 {
+    font-size:4em;
+    color: #aaa;
+    text-align: center;
+}
+
+h2 {
+    font-size:3em;
+    color: #777;
+}
+
+h4 {
+    font-size: 2em;
+}
+
+p {
+    font-size:1em;
+}
+
+code {
+    font-family: monospace;
+    background-color: white;
+}
+
+form, option, select, label {
+    font-size: 1em;
+    color: black;
+}
+
+input {
+    margin: 5px;
+}
+
+ol {
+    text-align: left;
+}
+
+/*
+th {
+    text-align:right;
+}
+*/
+
+/* classes */
+
+.hidden {display: none;}
+
+.visible {display: block;}
+
+.tooltip {
+    padding: 20px;
+    /*margin: 20px;*/
+    border-radius: 10px;
+    position:absolute;
+    background-color: #555;
+    color: #FF9;
+    font-size: 1em;
+    text-align: center;
+}
+/*
+h4.tooltip {
+    font-size: 14em;
+    text-align: center;
+}
+
+p.tooltip {
+    font-size: 10em;
+    text-align: left;
+}*/
+
+div.feature-box {
+    margin: 100px;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.feature-box {
+    background-color: #EEE;
+    color: #333;
+    font-size: 1em;
+    text-align: center;
+}
+
+.header {
+    }
+
+/* IDs */
+
+/*#poem {
+    text-align: center;
+    font-size: 14em;
+}*/

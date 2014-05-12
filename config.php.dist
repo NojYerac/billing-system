@@ -1,0 +1,17 @@
+<?php
+define('DB_TYPE',    'MySQL');
+
+define('DB_HOST',    'localhost');
+
+define('DB_USER',    'xss_user');
+
+define('DB_PASS',    'xss_user_pass');
+
+define('DB_NAME',    'xss_db');
+
+define('TITLE',        'XSS exersize');
+
+define('BASE_DIR',    dirname(__FILE__));
+
+define('BASE_URL',    'http://example.com');
+?>
