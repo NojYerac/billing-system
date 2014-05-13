@@ -40,3 +40,13 @@ function getProjects() {
     xmlhttp.send();
 }
 
+function editTime(time_id) {
+    var timeRow = document.getElementById(time_id);
+    //var window.savedTimeRow = cloneNode(timeRow);
+}
+
+function deleteTime(time_id) {
+    var timeRow = document.getElementById('row_' + time_id);
+    timeRow.parentNode.removeChild(timeRow);
+}
+

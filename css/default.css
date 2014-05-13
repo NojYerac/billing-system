@@ -26,6 +26,7 @@ p {
 }
 
 code {
+    color: black;
     font-family: monospace;
     background-color: white;
 }
@@ -62,7 +63,7 @@ th {
 .visible {display: block;}
 
 .tooltip {
-    padding: 20px;
+    padding: 8px;
     /*margin: 20px;*/
     border-radius: 10px;
     position:absolute;
@@ -89,7 +90,8 @@ div.feature-box {
 }
 
 table.times {
-    width:100%;
+    width:98%;
+    margin: 1%;
     text-align: center;
     }
 
@@ -99,6 +101,16 @@ table.times th {
     color: #EEE;
     padding: 3px;
     vertical-align: top;
+    }
+
+table.times tr:nth-child(2n) {
+    background-color: #EEE;
+    color: #555;
+    }
+
+table.times tr:nth-child(2n +1) {
+    background-color: #CCC;
+    color: #222;
     }
 
 .feature-box {

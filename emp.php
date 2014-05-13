@@ -202,22 +202,29 @@ foreach (get_visible_clients() as $customer_name => $customer_id) {
 		echo '<br/><br/><code style="background-color:#777">';
 		var_dump($time);
 		echo '<br>';*/
+			$time_id = (string)($time['_id']);
 			$start_time = new DateTime($time['start_time']['date']);
-			$stop_time = new DateTime($time['stop_time']['date']);
+			if (isset($time['stop_time'])) {
+				$stop_time = new DateTime($time['stop_time']['date']);
+			} else {
+				$stop_time = $start_time;
+			}
 			$diff_time = $start_time->diff($stop_time);
-			$table_rows .= "<tr><td>$customer_name</td><td>" .
+			$table_rows .= "<tr id=\"row_${time_id}\"><td>$customer_name</td><td>" .
 				"${project['project_name']}</td><td>" . 
 				$start_time->format($format) .
 				"</td><td>" . 
 				$stop_time->format($format) .
 				"</td><td>" . 
-				$diff_time->format('%H:%I:%S');
+				$diff_time->format('%H:%I:%S') .
+				"</td><td style=\"background-color:green\" onclick=\"editTime('$time_id')\">" .
+				"</td><td style=\"background-color:red\" onclick=\"deleteTime('$time_id')\">" .
 				"</td></tr>";
                 }
         }
 }
 $table_headers = '<tr><th>Customer</th><th>Project</th><th>Start time</th>' .
-	'<th>Stop time</th><th>Difference</th></tr>';
+	'<th>Stop time</th><th>Difference</th><th>E</th><th>D</th></tr>';
 
 
 $show_times = tagify(array(
