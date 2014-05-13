@@ -210,16 +210,17 @@ foreach (get_visible_clients() as $customer_name => $customer_id) {
 				$stop_time = $start_time;
 			}
 			$diff_time = $start_time->diff($stop_time);
-			$table_rows .= "<tr id=\"row_${time_id}\"><td>$customer_name</td><td>" .
-				"${project['project_name']}</td><td>" . 
-				$start_time->format($format) .
-				"</td><td>" . 
-				$stop_time->format($format) .
-				"</td><td>" . 
-				$diff_time->format('%H:%I:%S') .
-				"</td><td style=\"background-color:green\" onclick=\"editTime('$time_id')\">" .
-				"</td><td style=\"background-color:red\" onclick=\"deleteTime('$time_id')\">" .
-				"</td></tr>";
+			$table_rows .= "<tr id=\"row_${time_id}\">" .
+				"<td value=\"$customer_id\">$customer_name</td>" .
+				"<td value=\"$project_id\">${project['project_name']}</td>" . 
+				"<td>" . $start_time->format($format) . "</td>" .
+				"<td>" . $stop_time->format($format) . "</td>" .
+				"<td>" . $diff_time->format('%H:%I:%S') . "</td>" .
+				"<td style=\"background-color:green\"" .
+				" onclick=\"getEditTimeRow('$time_id')\"/>" .
+				"<td style=\"background-color:red\"" .
+			   	" onclick=\"if (confirm('Are you sure?')) {deleteTime('$time_id')}\"/>" .
+				"</tr>";
                 }
         }
 }
