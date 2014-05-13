@@ -50,10 +50,10 @@ function start_timer($project_id, $customer_id) {
 }
 
 function stop_timer($timer_id) {
-    return update_one_value(
+    return update_one_document(
         'timer',
-        array('_id' => $timer_id),
-        'stop_time', (new DateTime())
+        array('_id' => (new MongoId($timer_id))),
+        array('stop_time' => (new DateTime()))
     );
 }
 
@@ -76,9 +76,9 @@ if (isset($_GET['action']) && $csrf_passed) {
         $timer_id = start_timer($_POST['project_selector'], $_POST['customer_selector']);
         if ($timer_id) {
             $_SESSION['timer_started'] = $timer_started = $timer_id;
-            $status = 'stop timer successful';
+            $status = 'start timer successful';
         } else {
-            $status = 'stop timer failed';
+            $status = 'start timer failed';
         }
         break;
     case 'stop timer':
@@ -101,7 +101,7 @@ if (isset($_GET['action']) && $csrf_passed) {
             $status = 'create new project failed';
         }
         if (isset($_POST['start_timer'])) {
-            $timer_id = start_timer($project_id, $_POST['customer_id']);
+            $timer_id = start_timer((string)$project_id, $_POST['customer_id']);
 	    if ($timer_id) {
 		$_SESSION['timer_started'] = $timer_started = $timer_id;
                 $status .= '<br/>start timer successful';
@@ -179,18 +179,52 @@ $emp_forms['new_project'] = array(
         array()
     )
 );
+
+$format = 'Y-m-d h:i:s';
 $table_rows = '';
 foreach (get_visible_clients() as $customer_name => $customer_id) {
-        foreach (get_all_documents('projects', array('customer_id' => $customer_id)) as $project) {
-                foreach (get_all_documents('timer', array('project_id' => $project['_id'])) as $time) {
-                        $table_rows .= "<tr><td>$customer_name</td><td>${project['project_name']}<td>${time['start_time']}</td><td>${time['end_time']}</td>";
+	foreach (get_all_documents('projects', array(
+		'customer_id' => (string)$customer_id)
+	) as $project)
+	{
+		$project_id = $project['_id'];
+		$project_name = $project['project_name'];
+		/*
+		echo '<code style="background-color:#777">';
+		var_dump($project_id);
+		echo '<br/>';
+		var_dump((string)$project_id);
+		echo '<br/></code>';*/
+		foreach (get_all_documents('timer', array(
+			'project_id' => (string)$project_id
+		)) as $time) {
+		/*
+		echo '<br/><br/><code style="background-color:#777">';
+		var_dump($time);
+		echo '<br>';*/
+			$start_time = new DateTime($time['start_time']['date']);
+			$stop_time = new DateTime($time['stop_time']['date']);
+			$diff_time = $start_time->diff($stop_time);
+			$table_rows .= "<tr><td>$customer_name</td><td>" .
+				"${project['project_name']}</td><td>" . 
+				$start_time->format($format) .
+				"</td><td>" . 
+				$stop_time->format($format) .
+				"</td><td>" . 
+				$diff_time->format('%H:%I:%S');
+				"</td></tr>";
                 }
         }
 }
+$table_headers = '<tr><th>Customer</th><th>Project</th><th>Start time</th>' .
+	'<th>Stop time</th><th>Difference</th></tr>';
+
 
 $show_times = tagify(array(
-        'tag' => 'table',
-        'innerHTML' => $table_rows
+	'tag' => 'table',
+	'class' => 'times',
+	'id' => 'all_times_table',
+        'innerHTML' => $table_headers . $table_rows
         )
 );
 

@@ -43,6 +43,12 @@ ol {
     text-align: left;
 }
 
+table, th, td {
+    border:1px solid black;
+    border-collapse:collapse
+}
+
+
 /*
 th {
     text-align:right;
@@ -82,6 +88,19 @@ div.feature-box {
     border-radius: 10px;
 }
 
+table.times {
+    width:100%;
+    text-align: center;
+    }
+
+table.times th {
+    background-color: #555;
+    border: 1px solid #555;
+    color: #EEE;
+    padding: 3px;
+    vertical-align: top;
+    }
+
 .feature-box {
     background-color: #EEE;
     color: #333;
@@ -93,6 +112,15 @@ div.feature-box {
     }
 
 /* IDs */
+
+#timer_submit {
+    background-color: #555;
+    color: #EEE;
+    font-size: 2.5em;
+    margin: 10px;
+    border-radius: 5px;
+    }
+
 
 /*#poem {
     text-align: center;

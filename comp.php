@@ -16,6 +16,10 @@ function tagify($tag_defs) {
             $attrs .= sprintf(' %s="%s"', $attr, $value);
         }
     }
+    if (isset($innerHTML) && gettype($innerHTML) != 'string') {
+         var_dump($innerHTML);
+         die();
+    } 
     //special case for script tags.
     if ($tag == 'script' && !isset($innerHTML)) {
         $innerHTML = '';
