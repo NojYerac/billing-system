@@ -71,4 +71,17 @@ function insert_one_document($collection, array $params) {
     return $params['_id'];
 }
 
+function delete_one_document($collection, array $params) {
+    $client = new MongoClient(DB_HOST);
+    $db_server = $client->selectDB(DB_NAME);
+    $db_server->authenticate(DB_USER, DB_PASS);
+    $col = $db_server->selectCollection($collection);
+    $status = $col->remove($params, array('justOne'=> true));
+    $client->close();
+    if ($status['err']) {
+        return false;
+    }
+    return true;
+}
+
 ?>

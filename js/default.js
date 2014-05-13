@@ -42,11 +42,42 @@ function getProjects() {
 
 function editTime(time_id) {
     var timeRow = document.getElementById(time_id);
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            projSel.innerHTML = xmlhttp.responseText;
+        }
+    }
+    xmlhttp.open(
+        "GET",
+        "ajax/get-projects.php?custID=" + custID,
+        true
+    );
+    xmlhttp.send();
+
     //var window.savedTimeRow = cloneNode(timeRow);
 }
 
 function deleteTime(time_id) {
     var timeRow = document.getElementById('row_' + time_id);
-    timeRow.parentNode.removeChild(timeRow);
+    var csrfToken = document.getElementById('csrf_token').value;
+    var params = "csrf_token=" + encodeURIComponent(csrfToken) +
+	    "&time_id=" + encodeURIComponent(time_id) +
+	    "&action=delete"
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    	    timeRow.parentNode.removeChild(timeRow);
+        }
+    }
+    xmlhttp.open(
+        "POST",
+        "ajax/edit-time.php?",
+        true
+    );
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("Content-length", params.length);
+    xmlhttp.setRequestHeader("Connection", "close");
+    xmlhttp.send(params);
 }
 
