@@ -1,13 +1,4 @@
 onerror = alert;
-function youWin() {
-    document.getElementById('tah-dah').setAttribute('class', 'visible');
-    document.getElementById('chalenge').setAttribute('class', 'hidden');
-}
-
-function resetChalenge() {
-    document.getElementById('tah-dah').setAttribute('class', 'hidden');
-    document.getElementById('chalenge').setAttribute('class', 'visible');
-}
 
 function toggleVisible(targetId) {
     var target = document.getElementById(targetId);
@@ -78,7 +69,7 @@ function getEditTimeRow(time_id) {
     var projectTd = timeRow.children[1];
     var startTimeTd = timeRow.children[2];
     var stopTimeTd = timeRow.children[3];
-    var differenceTd = timeRow.children[4];
+    var diffTimeTd = timeRow.children[4];
     var greenButtonTd = timeRow.children[5];
     var redButtonTd = timeRow.children[6];
 
@@ -112,20 +103,23 @@ function getEditTimeRow(time_id) {
     var startTimeValue = startTimeTd.innerHTML.replace(' ', 'T');
     startTimeTd.innerHTML = '';
     var startTimeInput = document.createElement('input');
+    startTimeInput.id = 'start_datetime_' + time_id;
     startTimeInput.setAttribute('type', 'datetime-local');
-    startTimeInput.setAttribute('onchange', 'calculateTimeDiff()');
+    startTimeInput.setAttribute('onchange', "calculateTimeDiff('" + time_id + "')");
     startTimeInput.value = startTimeValue;
     startTimeTd.appendChild(startTimeInput);
     
     var stopTimeValue = stopTimeTd.innerHTML.replace(' ', 'T');
     stopTimeTd.innerHTML = '';
     var stopTimeInput = document.createElement('input');
+    stopTimeInput.id = 'stop_datetime_' + time_id;
     stopTimeInput.setAttribute('type', 'datetime-local');
-    stopTimeInput.setAttribute('onchange', 'calculateTimeDiff()');
+    stopTimeInput.setAttribute('onchange', "calculateTimeDiff('" + time_id + "')");
     stopTimeInput.value = stopTimeValue;
     stopTimeTd.appendChild(stopTimeInput);
     
     //diffTime
+    diffTimeTd.id = 'diff_time_' + time_id;
     
     greenButtonTd.setAttribute("onclick", "editTime('" + time_id + "')");
     
@@ -133,8 +127,16 @@ function getEditTimeRow(time_id) {
 
 }
 
-function calculateTimeDiff() {
-    return true;
+function calculateTimeDiff(time_id) {
+    var diffTimeTd = document.getElementById('diff_time_' + time_id);
+    var startTime = new Date(document.getElementById('start_datetime_' + time_id).value);
+    var stopTime = new Date(document.getElementById('stop_datetime_' + time_id).value);
+    var diffTime = stopTime - startTime;
+    var hours = ((diffTime / (1000 * 60 * 60))|0);
+    var mins = ('0' + ((((diffTime / (1000 * 60)) % 60)|0) % 60)).slice(-2);
+    var secs = ('0' + (((diffTime / 1000) % 60)|0)).slice(-2);
+    diffTimeTd.innerHTML = hours + ':' + mins + ':' + secs;
+    //console.log(startTime.getTime() + ' - ' + stopTime.getTime() + ' = ' + diffTime);
 }
 
 function cancleEditTimeRow(time_id) {
@@ -143,19 +145,32 @@ function cancleEditTimeRow(time_id) {
 }
 
 function editTime(time_id) {
-    var timeRow = document.getElementById(time_id);
+    var timeRow = document.getElementById('row_' + time_id);
+    var csrfToken = document.getElementById('csrf_token').value;
+    var startTime = new Date(document.getElementById('start_datetime_' + time_id).value);
+    var stopTime = new Date(document.getElementById('stop_datetime_' + time_id).value);
+    var customerSelector = document.getElementById('customer_selector' + time_id);
+    var projectSelector = document.getElementById('project_selector' + time_id);
+    var customerID = customerSelector.options[customerSelector.selectedIndex].value;
+    var projectID = projectSelector.options[projectSelector.selectedIndex].value;
+    var params = "csrf_token=" + encodeURIComponent(csrfToken) +
+	    "&time_id=" + encodeURIComponent(time_id) +
+	    "&cust_id=" + encodeURIComponent(customerID) +
+	    "&proj_id=" + encodeURIComponent(projectID) +
+	    "&start_time=" + encodeURIComponent(startTime.getTime()/1000) +
+	    "&stop_time=" + encodeURIComponent(stopTime.getTime()/1000);
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            projSel.innerHTML = xmlhttp.responseText;
+            timeRow.innerHTML = xmlhttp.responseText;
         }
     }
     xmlhttp.open(
-        "GET",
-        "ajax/get-projects.php?custID=" + custID,
+        "POST",
+        "ajax/edit-time.php",
         true
     );
-    xmlhttp.send();
+    xmlhttp.send(params);
 
     //var window.savedTimeRow = cloneNode(timeRow);
 }
@@ -174,7 +189,7 @@ function deleteTime(time_id) {
     }
     xmlhttp.open(
         "POST",
-        "ajax/edit-time.php?",
+        "ajax/edit-time.php",
         true
     );
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
