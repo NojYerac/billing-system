@@ -63,7 +63,7 @@ function edit_time($time_id) {
         }
         //TODO: create a function for td creation, put in comp.php,
         //similar functionality in emp.php
-        $format = 'Y-m-d h:i:s';
+        $format = 'Y-m-d H:i:s';
         $diff_time = $set['start_time']->diff($set['stop_time']);
         $status = "<td value=\"${set['customer_id']}\">$customer_name</td>" .
             "<td value=\"${set['project_id']}\">$project_name</td>" .

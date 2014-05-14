@@ -180,7 +180,7 @@ $emp_forms['new_project'] = array(
     )
 );
 
-$format = 'Y-m-d h:i:s';
+$format = 'Y-m-d H:i:s';
 $table_rows = '';
 foreach (get_visible_clients() as $customer_name => $customer_id) {
 	foreach (get_all_documents('projects', array(
