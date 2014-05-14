@@ -1,17 +1,21 @@
 <?php
-define('DB_TYPE',    'MySQL');
 
-define('DB_HOST',    'localhost');
+define('DB_TYPE',    'MongoDB');
 
-define('DB_USER',    'xss_user');
+define('DB_HOST',    'db_host');
 
-define('DB_PASS',    'xss_user_pass');
+define('DB_USER',    'db_user_name');
 
-define('DB_NAME',    'xss_db');
+define('DB_PASS',    'db_password');
 
-define('TITLE',        'XSS exersize');
+define('DB_NAME',    'db_name');
 
-define('BASE_DIR',    dirname(__FILE__));
+define('VERSION',    'Billing_system/v0.1');
 
-define('BASE_URL',    'http://example.com');
+define('TITLE',      'Billing system');
+
+define('BASE_DIR',   dirname(__FILE__));
+
+define('BASE_URL',   'http://example.com/');
+
 ?>
