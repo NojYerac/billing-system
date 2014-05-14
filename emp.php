@@ -210,6 +210,8 @@ foreach (get_visible_clients() as $customer_name => $customer_id) {
 				$stop_time = $start_time;
 			}
 			$diff_time = $start_time->diff($stop_time);
+			//TODO: create a function for VVV td creation, put in comp.php,
+			//similar functionality in ajax/edit-time.php
 			$table_rows .= "<tr id=\"row_${time_id}\">" .
 				"<td value=\"$customer_id\">$customer_name</td>" .
 				"<td value=\"$project_id\">${project['project_name']}</td>" . 
@@ -224,6 +226,7 @@ foreach (get_visible_clients() as $customer_name => $customer_id) {
                 }
         }
 }
+
 $table_headers = '<tr><th>Customer</th><th>Project</th><th>Start time</th>' .
 	'<th>Stop time</th><th>Difference</th><th>E</th><th>D</th></tr>';
 

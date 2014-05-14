@@ -32,6 +32,54 @@ $action = $_POST['action'];
  * customer in visible clients.
  */ 
 
+function edit_time($time_id) {
+    $set = array();
+    $param_names = array('customer_id', 'project_id', 'start_time', 'stop_time');
+    foreach ($param_names as $pn) {
+        if (!isset($_POST[$pn]) && gettype($_POST[$pn]) != 'string') {
+            echo "Failed param name check\n";
+            return false;
+        } else if (strpos($pn, 'time')) {
+            $set[$pn] = (new DateTime())->setTimestamp($_POST[$pn]);
+        } else {
+            $set[$pn] = $_POST[$pn];
+        }
+    }
+    $status = update_one_document('timer', array('_id' => (new MongoId($time_id))), $set);
+    if ($status) {
+        $customer_name = get_one_value(
+            'clients',
+            array('_id' => (new MongoId($set['customer_id']))),
+            'customer_name'
+        );
+        $project_name = get_one_value(
+            'projects',
+            array('_id' => (new MongoId($set['project_id']))),
+            'project_name'
+        );
+        if (!($project_name && $customer_name)) {
+            echo "Failed cust/proj lookup\n";
+            return false;
+        }
+        //TODO: create a function for td creation, put in comp.php,
+        //similar functionality in emp.php
+        $format = 'Y-m-d h:i:s';
+        $diff_time = $set['start_time']->diff($set['stop_time']);
+        $status = "<td value=\"${set['customer_id']}\">$customer_name</td>" .
+            "<td value=\"${set['project_id']}\">$project_name</td>" .
+            "<td>" . $set['start_time']->format($format) . "</td>" .
+            "<td>" . $set['stop_time']->format($format) . "</td>" .
+            "<td>" . $diff_time->format('%H:%I:%S') . "</td>" .
+            "<td style=\"background-color:green\"" .
+            " onclick=\"getEditTimeRow('$time_id')\"/>" .
+            "<td style=\"background-color:red\"" .
+            " onclick=\"if (confirm('Delete row?')) {deleteTime('$time_id')}\"/>";
+    } else {
+        echo "Update query failed\n";
+    }
+    return $status;
+}
+
 switch ($action) {
     case "delete":
         $status = delete_one_document('timer', array(
@@ -40,13 +88,15 @@ switch ($action) {
         );
             break;
     case "edit":
-        $status = false;
+        $status = edit_time($time_id);
+        break;
     default:
         $status = false;
+        break;
 }
 
 if ($status) {
-    echo "success";
+    echo (gettype($status) == 'string')?$status:"success";
 } else {
     echo "failed";
 }
