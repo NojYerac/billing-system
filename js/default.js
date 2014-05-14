@@ -1,3 +1,4 @@
+onerror = alert;
 function youWin() {
     document.getElementById('tah-dah').setAttribute('class', 'visible');
     document.getElementById('chalenge').setAttribute('class', 'hidden');
@@ -19,11 +20,10 @@ function toggleVisible(targetId) {
     target.setAttribute('class', targetClass);
 }
 
-function getProjects() {
-	getProjects('');
-}
-
 function getProjects(suffix) {
+    if (suffix === undefined) {
+        suffix = '';
+    }
     var custSel = document.getElementById('customer_selector'+suffix);
     var custID = custSel.options[custSel.selectedIndex].value;
     if (custID == '0') {
@@ -43,7 +43,27 @@ function getProjects(suffix) {
     );
     xmlhttp.send();
 }
+
+
+
 window.savedTr = {};
+
+function getIndexByValue(selectElement, value) {
+    for ( i=0, j=selectElement.children.length; i<j; i++ ) {
+        if (selectElement.children[i].value == value) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+function cloneNodeAndChildrenById(id) {
+    var origNode = document.getElementById(id);
+    var newNode = origNode.cloneNode();
+    newNode.innerHTML = origNode.innerHTML;
+    return newNode;
+}
+
 function getEditTimeRow(time_id) {
     /*
      * replace the row with a form
@@ -62,19 +82,24 @@ function getEditTimeRow(time_id) {
     var greenButtonTd = timeRow.children[5];
     var redButtonTd = timeRow.children[6];
 
-    var customerSelector = cloneNode(document.getElementById('customer_selector'));
-    var custID = customerTd.value;
+    var customerSelector = cloneNodeAndChildrenById('customer_selector');
+    var custID = customerTd.getAttribute('value');
     customerTd.innerHTML = '';
     customerTd.appendChild(customerSelector);
     customerSelector.id += time_id;
     customerSelector.setAttribute('onchange', "getProjects('"+time_id+"')");
+    customerSelector.selectedIndex = getIndexByValue(customerSelector, custID);
     
+    var projId = projectTd.getAttribute('value');
     projectSelector = document.createElement('select');
     projectSelector.id = 'project_selector' + time_id;
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            projectTd.appendChild(projectSelector);
+            projectTd.innerHTML = '';
             projectSelector.innerHTML = xmlhttp.responseText;
+            projectSelector.selectedIndex = getIndexByValue(projectSelector, projId);
         }
     }
     xmlhttp.open(
@@ -83,29 +108,38 @@ function getEditTimeRow(time_id) {
         true
     );
     xmlhttp.send();
-    var projId = projectTd.value;
-    projectTd.innerHTML = '';
-    projectTd.appendChild(projectSelector);
-    projectSelector.selectedIndex = projId;
-    var startTimeValue = startTimeTd.inneHTML.replace(' ', 'T');
+
+    var startTimeValue = startTimeTd.innerHTML.replace(' ', 'T');
     startTimeTd.innerHTML = '';
-    var startTimeInput = document.createElement('datetime-local');
+    var startTimeInput = document.createElement('input');
+    startTimeInput.setAttribute('type', 'datetime-local');
+    startTimeInput.setAttribute('onchange', 'calculateTimeDiff()');
     startTimeInput.value = startTimeValue;
     startTimeTd.appendChild(startTimeInput);
-    var stopTimeValue = stopTimeTd.innerHTMLdd.replace(' ', 'T');
+    
+    var stopTimeValue = stopTimeTd.innerHTML.replace(' ', 'T');
     stopTimeTd.innerHTML = '';
-    var stopTimeInput = document.createElement('datetime-local');
+    var stopTimeInput = document.createElement('input');
+    stopTimeInput.setAttribute('type', 'datetime-local');
+    stopTimeInput.setAttribute('onchange', 'calculateTimeDiff()');
     stopTimeInput.value = stopTimeValue;
     stopTimeTd.appendChild(stopTimeInput);
+    
     //diffTime
+    
     greenButtonTd.setAttribute("onclick", "editTime('" + time_id + "')");
+    
     redButtonTd.setAttribute("onclick", "cancleEditTimeRow('" + time_id + "')");
 
 }
 
+function calculateTimeDiff() {
+    return true;
+}
+
 function cancleEditTimeRow(time_id) {
-    var timeRow = document.getElementById(time_id);
-    timeRow = window.savedTr[time_id];
+    var timeRow = document.getElementById('row_' + time_id);
+    timeRow.innerHTML = window.savedTr[time_id];
 }
 
 function editTime(time_id) {

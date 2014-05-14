@@ -29,7 +29,7 @@ if (isset($_GET['custID'])) {
 		//return option tags
 		$options .= get_project_options($_GET['custID']);
 	} else {
-		http_response_status(403);
+		http_response_code(403);
 		die('Forbidden');
 	}
 } else {

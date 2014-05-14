@@ -254,7 +254,7 @@ function get_project_options($customer_id) {
 }
 
 function get_project_selector() {
-    $innerHTML = get_customer_selector(array('onchange' => 'getProjects()')) . '<br/>' .
+    $innerHTML = get_customer_selector(array('onchange' => "getProjects()")) . '<br/>' .
         selectify('project_selector', array('Select a project' => ''), array('label' => 'Project: '));
     $selector = tagify(
         array(

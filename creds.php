@@ -98,7 +98,7 @@ function get_visible_clients() {
 	        }
         foreach ($all_customers as $doc) {
             if (in_array($doc['_id'], $can_see_clients)) {
-                $customers[$doc['customer_name']] = $doc['_id'];
+                $customers[htmlentities($doc['customer_name'])] = $doc['_id'];
             } 
         }
         break;

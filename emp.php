@@ -188,7 +188,7 @@ foreach (get_visible_clients() as $customer_name => $customer_id) {
 	) as $project)
 	{
 		$project_id = $project['_id'];
-		$project_name = $project['project_name'];
+		$project_name = htmlentities($project['project_name']);
 		/*
 		echo '<code style="background-color:#777">';
 		var_dump($project_id);
@@ -219,7 +219,7 @@ foreach (get_visible_clients() as $customer_name => $customer_id) {
 				"<td style=\"background-color:green\"" .
 				" onclick=\"getEditTimeRow('$time_id')\"/>" .
 				"<td style=\"background-color:red\"" .
-			   	" onclick=\"if (confirm('Are you sure?')) {deleteTime('$time_id')}\"/>" .
+			   	" onclick=\"if (confirm('Delete row?')) {deleteTime('$time_id')}\"/>" .
 				"</tr>";
                 }
         }
