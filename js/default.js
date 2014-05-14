@@ -96,8 +96,8 @@ function getEditTimeRow(time_id) {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            projectTd.appendChild(projectSelector);
             projectTd.innerHTML = '';
+            projectTd.appendChild(projectSelector);
             projectSelector.innerHTML = xmlhttp.responseText;
             projectSelector.selectedIndex = getIndexByValue(projectSelector, projId);
         }
