@@ -129,7 +129,7 @@ $timer_form_start = formify(
     '?action=start+timer',
     array(
         $csrf_input,
-        get_project_selector(), '<br/>',
+        get_project_selector('required'), '<br/>',
         inputify('submit', 'timer_submit', array('value' => 'Start'))
     ),
     array()
@@ -161,10 +161,10 @@ $emp_forms['new_project'] = array(
         '?action=new+project',
         array(
             $csrf_input,
-            get_customer_selector(array('name' => 'customer_id')), '<br/>',
+            get_customer_selector(array('required' => 'required', 'name' => 'customer_id')), '<br/>',
             inputify('text', 'project_name', array(
                 'required' => 'required',
-                'label' => 'Project name: '
+		'label' => 'Project name: ',
                 )
             ), '<br/>',
             inputify('checkbox', 'start_timer', array(
@@ -172,7 +172,7 @@ $emp_forms['new_project'] = array(
                 )
             ), '<br/>',
             inputify('submit', 'create_new_project', array(
-                'value' => 'Create project'
+		'value' => 'Create project'
                 )
             )
         ),
@@ -230,7 +230,6 @@ foreach (get_visible_clients() as $customer_name => $customer_id) {
 $table_headers = '<tr><th>Customer</th><th>Project</th><th>Start time</th>' .
 	'<th>Stop time</th><th>Difference</th><th>E</th><th>D</th></tr>';
 
-
 $show_times = tagify(array(
 	'tag' => 'table',
 	'class' => 'times',
@@ -242,6 +241,13 @@ $show_times = tagify(array(
 $emp_forms['show_times'] = array(
     'title' => 'Show all times',
     'innerHTML' => $show_times
+);
+
+$compose_invoice = '';
+
+$emp_forms['compose_invoice'] = array(
+    'title' => 'Create invoice',
+    'innerHTML' => $compose_invoice
 );
 
 //assemble buttons and forms

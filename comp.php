@@ -221,7 +221,7 @@ function pprint($html) {
 
 function get_customer_selector(array $addnl_attrs=array()) {
     $customers = array_merge(
-        array('Select a customer' => '0'),
+        array('Select a customer' => ''),
         get_visible_clients()
     );
     $addnl_attrs = array_merge(
@@ -236,7 +236,7 @@ function get_project_options($customer_id) {
 	$options = optionify(
 		"project_options_null",
 		'Select a project',
-		'0', array('selected' => 'selected')
+		'', array('selected' => 'selected')
 	);
 	$projects = get_all_documents(
 		'projects',
@@ -253,9 +253,15 @@ function get_project_options($customer_id) {
 	return $options;
 }
 
-function get_project_selector() {
-    $innerHTML = get_customer_selector(array('onchange' => "getProjects()")) . '<br/>' .
-        selectify('project_selector', array('Select a project' => ''), array('label' => 'Project: '));
+function get_project_selector($required=false) {
+    $c_attr = array('onchange' => "getProjects()");
+    $p_attr = array( 'label' => 'Project: ');
+    if ($required) {
+        $c_attr['required'] = 'required';
+        $p_attr['required'] = 'required';
+    }
+    $innerHTML = get_customer_selector($c_attr) . '<br/>' .
+        selectify('project_selector', array('Select a project' => ''), $p_attr);
     $selector = tagify(
         array(
             'tag' => 'div',
@@ -277,6 +283,98 @@ function get_status_box($status) {
         )
     );
     return $status_box;
+}
+
+function get_project_name_by_id($project_id) {
+    return get_one_value(
+    'projects',
+    array('_id' => (new MongoId($project_id))),
+    'project_name'
+    );
+}
+
+function get_customer_name_by_id($customer_id) {
+    return get_one_value(
+        'clients',
+        array('_id' => (new MongoId($customer_id))),
+        'customer_name'
+        );
+}
+
+function get_time_rows_by_customer_and_datetime($customer_id, $min_time, $max_time) {
+    $customer_name = get_customer_name_by_id($customer_id);
+    $times = get_all_documents('timer', array(
+        'customer_id' => $customer_id),
+        'start_time' => array(
+            '$gt' => $min_time,
+            '$lt' => $max_time
+            )
+        );
+    $time_rows = '';
+    $project_names = array();
+    foreach ($times as $time) {
+        if (!isset($project_names[$time['project_id']])) {
+            $project_names[$time['project_id']] = get_project_name_by_id($time['project_id']);
+        }
+        $time_rows .= get_time_row(
+            (string)$time['_id'],
+            $customer_id,
+            $customer_name,
+            $time['project_id'],
+            $project_names[$time['project_id']],
+            $time['start_time'],
+            $time['stop_time']
+        );
+    }
+    return $time_rows;
+}
+
+function get_time_rows_by_project($project_id) {
+    $project = get_all_documents('projects', array('project_id' => (new MongoId($project_id))));
+    $project_name = $project['project_name'];
+    $customer_id = $project['customer_id'];
+    $customer_name = get_customer_name_by_id($customer_id);
+    $times = get_all_documents('timer', array(
+        'project_id' => $project_id
+        );
+    $time_rows = '';
+    foreach ($times as $time) {
+        $time_rows .= get_time_row(
+            (string)$time['_id'],
+            $customer_id,
+            $customer_name,
+            $project_id,
+            $project_name,
+            $time['start_time'], $time['stop_time']
+        );
+    }
+    return $time_rows;
+}
+        
+
+            
+function get_time_row(
+        $time_id,
+        $customer_id,
+        $customer_name,
+        $project_id,
+        $project_name,
+        $start_time,
+        $stop_time
+        ) {
+    //format values
+    $format = 'Y-m-d H:i:s';
+    $diff_time = $start_time->diff($stop_time);
+    return "<td value=\"$customer_id\">$customer_name</td>" .
+        "<td value=\"$project_id\">$project_name</td>" .
+        "<td>" . $start_time->format($format) . "</td>" .
+        "<td>" . $stop_time->format($format) . "</td>" .
+        "<td>" . $diff_time->format('%H:%I:%S') . "</td>" .
+        "<td style=\"background-color:green\"" .
+        " onclick=\"getEditTimeRow('$time_id')\"/>" .
+        "<td style=\"background-color:red\"" .
+        " onclick=\"if (confirm('Delete row?')) {deleteTime('$time_id')}\"/>";
+  
 }
 
 ?>

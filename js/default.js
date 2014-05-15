@@ -62,7 +62,6 @@ function getEditTimeRow(time_id) {
      * step 2: build form elements
      * step 3: assemble new elements
      */
-    //step 1
     var timeRow = document.getElementById('row_' + time_id);
     window.savedTr[time_id] = timeRow.innerHTML;
     var customerTd = timeRow.children[0];
@@ -72,7 +71,6 @@ function getEditTimeRow(time_id) {
     var diffTimeTd = timeRow.children[4];
     var greenButtonTd = timeRow.children[5];
     var redButtonTd = timeRow.children[6];
-
     var customerSelector = cloneNodeAndChildrenById('customer_selector');
     var custID = customerTd.getAttribute('value');
     customerTd.innerHTML = '';
@@ -80,7 +78,6 @@ function getEditTimeRow(time_id) {
     customerSelector.id += time_id;
     customerSelector.setAttribute('onchange', "getProjects('"+time_id+"')");
     customerSelector.selectedIndex = getIndexByValue(customerSelector, custID);
-    
     var projId = projectTd.getAttribute('value');
     projectSelector = document.createElement('select');
     projectSelector.id = 'project_selector' + time_id;
@@ -99,7 +96,6 @@ function getEditTimeRow(time_id) {
         true
     );
     xmlhttp.send();
-
     var startTimeValue = startTimeTd.innerHTML.replace(' ', 'T');
     startTimeTd.innerHTML = '';
     var startTimeInput = document.createElement('input');
@@ -108,7 +104,6 @@ function getEditTimeRow(time_id) {
     startTimeInput.setAttribute('onchange', "calculateTimeDiff('" + time_id + "')");
     startTimeInput.value = startTimeValue;
     startTimeTd.appendChild(startTimeInput);
-    
     var stopTimeValue = stopTimeTd.innerHTML.replace(' ', 'T');
     stopTimeTd.innerHTML = '';
     var stopTimeInput = document.createElement('input');
@@ -117,14 +112,9 @@ function getEditTimeRow(time_id) {
     stopTimeInput.setAttribute('onchange', "calculateTimeDiff('" + time_id + "')");
     stopTimeInput.value = stopTimeValue;
     stopTimeTd.appendChild(stopTimeInput);
-    
-    //diffTime
     diffTimeTd.id = 'diff_time_' + time_id;
-    
     greenButtonTd.setAttribute("onclick", "editTime('" + time_id + "')");
-    
     redButtonTd.setAttribute("onclick", "cancleEditTimeRow('" + time_id + "')");
-
 }
 
 function calculateTimeDiff(time_id) {
