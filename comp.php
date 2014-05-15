@@ -304,12 +304,13 @@ function get_customer_name_by_id($customer_id) {
 function get_time_rows_by_customer_and_datetime($customer_id, $min_time, $max_time) {
     $customer_name = get_customer_name_by_id($customer_id);
     $times = get_all_documents('timer', array(
-        'customer_id' => $customer_id),
+        'customer_id' => $customer_id,
         'start_time' => array(
             '$gt' => $min_time,
             '$lt' => $max_time
             )
-        );
+        )
+    );
     $time_rows = '';
     $project_names = array();
     foreach ($times as $time) {
@@ -336,7 +337,8 @@ function get_time_rows_by_project($project_id) {
     $customer_name = get_customer_name_by_id($customer_id);
     $times = get_all_documents('timer', array(
         'project_id' => $project_id
-        );
+        )
+    );
     $time_rows = '';
     foreach ($times as $time) {
         $time_rows .= get_time_row(
