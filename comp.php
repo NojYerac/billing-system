@@ -304,7 +304,7 @@ function get_customer_name_by_id($customer_id) {
 function get_time_rows_by_customer_and_datetime($customer_id, $min_time, $max_time) {
     $customer_name = get_customer_name_by_id($customer_id);
     $times = get_all_documents('timer', array(
-        'customer_id' => $customer_id,
+        'customer_id' => (new MongoId($customer_id)),
         'start_time' => array(
             '$gt' => $min_time,
             '$lt' => $max_time
@@ -352,9 +352,7 @@ function get_time_rows_by_project($project_id) {
     }
     return $time_rows;
 }
-        
-
-            
+ 
 function get_time_row(
         $time_id,
         $customer_id,
@@ -376,7 +374,6 @@ function get_time_row(
         " onclick=\"getEditTimeRow('$time_id')\"/>" .
         "<td style=\"background-color:red\"" .
         " onclick=\"if (confirm('Delete row?')) {deleteTime('$time_id')}\"/>";
-  
 }
 
 ?>

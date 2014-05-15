@@ -182,37 +182,46 @@ $emp_forms['new_project'] = array(
 
 $format = 'Y-m-d H:i:s';
 $table_rows = '';
+$min_time = (new DateTime())->modify('first day of this month');
+$min_time->setTime(0, 0, 0);
+$max_time = (new DateTime())->modify('last day of this month');
+$max_time->setTime(23, 59, 59);
 foreach (get_visible_clients() as $customer_name => $customer_id) {
-	foreach (get_all_documents('projects', array(
+    $table_rows .= get_time_rows_by_customer_and_datetime(
+        (string)$customer_id,
+        $min_time,
+        $max_time
+        );
+/*	foreach (get_all_documents('projects', array(
 		'customer_id' => (string)$customer_id)
 	) as $project)
 	{
 		$project_id = $project['_id'];
-		$project_name = htmlentities($project['project_name']);
+		$project_name = $project['project_name'];
 		/*
 		echo '<code style="background-color:#777">';
 		var_dump($project_id);
 		echo '<br/>';
 		var_dump((string)$project_id);
 		echo '<br/></code>';*/
-		foreach (get_all_documents('timer', array(
+/*		foreach (get_all_documents('timer', array(
 			'project_id' => (string)$project_id
 		)) as $time) {
 		/*
 		echo '<br/><br/><code style="background-color:#777">';
 		var_dump($time);
 		echo '<br>';*/
-			$time_id = (string)($time['_id']);
+/*			$time_id = (string)($time['_id']);
 			$start_time = new DateTime($time['start_time']['date']);
 			if (isset($time['stop_time'])) {
 				$stop_time = new DateTime($time['stop_time']['date']);
 			} else {
 				$stop_time = $start_time;
 			}
-			$diff_time = $start_time->diff($stop_time);
+            $diff_time = $start_time->diff($stop_time);*/
 			//TODO: create a function for VVV td creation, put in comp.php,
 			//similar functionality in ajax/edit-time.php
-			$table_rows .= "<tr id=\"row_${time_id}\">" .
+/*			$table_rows .= "<tr id=\"row_${time_id}\">" .
 				"<td value=\"$customer_id\">$customer_name</td>" .
 				"<td value=\"$project_id\">${project['project_name']}</td>" . 
 				"<td>" . $start_time->format($format) . "</td>" .
@@ -224,7 +233,7 @@ foreach (get_visible_clients() as $customer_name => $customer_id) {
 			   	" onclick=\"if (confirm('Delete row?')) {deleteTime('$time_id')}\"/>" .
 				"</tr>";
                 }
-        }
+        }*/
 }
 
 $table_headers = '<tr><th>Customer</th><th>Project</th><th>Start time</th>' .

@@ -35,8 +35,6 @@ function getProjects(suffix) {
     xmlhttp.send();
 }
 
-
-
 window.savedTr = {};
 
 function getIndexByValue(selectElement, value) {
@@ -164,8 +162,6 @@ function editTime(time_id) {
     xmlhttp.setRequestHeader("Content-length", params.length);
     xmlhttp.setRequestHeader("Connection", "close");
     xmlhttp.send(params);
-
-    //var window.savedTimeRow = cloneNode(timeRow);
 }
 
 function deleteTime(time_id) {
@@ -190,5 +186,4 @@ function deleteTime(time_id) {
     xmlhttp.setRequestHeader("Connection", "close");
     xmlhttp.send(params);
 }
-
 

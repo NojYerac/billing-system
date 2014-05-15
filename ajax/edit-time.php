@@ -1,36 +1,7 @@
 <?php
 include('../config.php');
 include('../db.php');
-
-session_start();
-if (!isset($_SESSION['user_login']) || !isset($_SESSION['user_priv']) ||
-    !in_array($_SESSION['user_priv'], array('Administrator', 'Employee'))) {
-    http_response_code(401);
-    echo "Not Authorized";
-    exit();
-}
-
-if (!isset($_POST['csrf_token']) ||
-    $_POST['csrf_token'] != $_SESSION['csrf_token']) {
-    http_response_code(500);
-    echo "CSRF check failed!";
-    exit();
-}
-
-if (!isset($_POST['time_id']) || !isset($_POST['action'])) {
-    http_response_code(500);
-    echo "Missing required params";
-    exit();
-}
-
-$time_id = $_POST['time_id'];
-$action = $_POST['action'];
-
-/*
- * TODO: add permision check!
- * employee can only change if time belongs to
- * customer in visible clients.
- */ 
+include('../comp.php');
 
 function edit_time($time_id) {
     $set = array();
@@ -61,24 +32,52 @@ function edit_time($time_id) {
             echo "Failed cust/proj lookup\n";
             return false;
         }
-        //TODO: create a function for td creation, put in comp.php,
-        //similar functionality in emp.php
-        $format = 'Y-m-d H:i:s';
-        $diff_time = $set['start_time']->diff($set['stop_time']);
-        $status = "<td value=\"${set['customer_id']}\">$customer_name</td>" .
-            "<td value=\"${set['project_id']}\">$project_name</td>" .
-            "<td>" . $set['start_time']->format($format) . "</td>" .
-            "<td>" . $set['stop_time']->format($format) . "</td>" .
-            "<td>" . $diff_time->format('%H:%I:%S') . "</td>" .
-            "<td style=\"background-color:green\"" .
-            " onclick=\"getEditTimeRow('$time_id')\"/>" .
-            "<td style=\"background-color:red\"" .
-            " onclick=\"if (confirm('Delete row?')) {deleteTime('$time_id')}\"/>";
+        $status = get_time_row(
+            $time_id,
+            $set['customer_id'],
+            $customer_name,
+            $set['project_id'],
+            $project_name,
+            $set['start_time'],
+            $set['stop_time']
+            );
     } else {
         echo "Update query failed\n";
     }
     return $status;
 }
+
+session_start();
+
+if (!isset($_SESSION['user_login']) || !isset($_SESSION['user_priv']) ||
+    !in_array($_SESSION['user_priv'], array('Administrator', 'Employee'))) {
+    http_response_code(401);
+    echo "Not Authorized";
+    exit();
+}
+
+if (!isset($_POST['csrf_token']) ||
+    $_POST['csrf_token'] != $_SESSION['csrf_token']) {
+    http_response_code(500);
+    echo "CSRF check failed!";
+    exit();
+}
+
+if (!isset($_POST['time_id']) || !isset($_POST['action'])) {
+    http_response_code(500);
+    echo "Missing required params";
+    exit();
+}
+
+$time_id = $_POST['time_id'];
+$action = $_POST['action'];
+
+/*
+ * TODO: add permision check!
+ * employee can only change if time belongs to
+ * customer in visible clients.
+ */ 
+
 
 switch ($action) {
     case "delete":
@@ -100,4 +99,5 @@ if ($status) {
 } else {
     echo "failed";
 }
+
 ?>
