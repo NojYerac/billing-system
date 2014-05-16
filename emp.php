@@ -1,4 +1,3 @@
-
 <?php
 require_once('config.php');
 require_once('db.php');
@@ -44,7 +43,8 @@ function start_timer($project_id, $customer_id) {
         array(
             'project_id' => $project_id,
             'customer_id' => $customer_id,
-            'start_time' => prepare_datetime(new DateTime())
+            'start_time' => prepare_datetime(new DateTime()),
+            'stop_time' => prepare_datetime(new DateTime())
         )
     );
 }
@@ -192,48 +192,6 @@ foreach (get_visible_clients() as $customer_name => $customer_id) {
         prepare_datetime($min_time),
         prepare_datetime($max_time)
         );
-/*	foreach (get_all_documents('projects', array(
-		'customer_id' => (string)$customer_id)
-	) as $project)
-	{
-		$project_id = $project['_id'];
-		$project_name = $project['project_name'];
-		/*
-		echo '<code style="background-color:#777">';
-		var_dump($project_id);
-		echo '<br/>';
-		var_dump((string)$project_id);
-		echo '<br/></code>';*/
-/*		foreach (get_all_documents('timer', array(
-			'project_id' => (string)$project_id
-		)) as $time) {
-		/*
-		echo '<br/><br/><code style="background-color:#777">';
-		var_dump($time);
-		echo '<br>';*/
-/*			$time_id = (string)($time['_id']);
-			$start_time = new DateTime($time['start_time']['date']);
-			if (isset($time['stop_time'])) {
-				$stop_time = new DateTime($time['stop_time']['date']);
-			} else {
-				$stop_time = $start_time;
-			}
-            $diff_time = $start_time->diff($stop_time);*/
-			//TODO: create a function for VVV td creation, put in comp.php,
-			//similar functionality in ajax/edit-time.php
-/*			$table_rows .= "<tr id=\"row_${time_id}\">" .
-				"<td value=\"$customer_id\">$customer_name</td>" .
-				"<td value=\"$project_id\">${project['project_name']}</td>" . 
-				"<td>" . $start_time->format($format) . "</td>" .
-				"<td>" . $stop_time->format($format) . "</td>" .
-				"<td>" . $diff_time->format('%H:%I:%S') . "</td>" .
-				"<td style=\"background-color:green\"" .
-				" onclick=\"getEditTimeRow('$time_id')\"/>" .
-				"<td style=\"background-color:red\"" .
-			   	" onclick=\"if (confirm('Delete row?')) {deleteTime('$time_id')}\"/>" .
-				"</tr>";
-                }
-        }*/
 }
 
 $table_headers = '<tr><th>Customer</th><th>Project</th><th>Start time</th>' .

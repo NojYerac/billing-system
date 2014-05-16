@@ -348,7 +348,8 @@ function get_time_rows_by_project($project_id) {
             $customer_name,
             $project_id,
             $project_name,
-            $time['start_time'], $time['stop_time']
+            date_create_from_format( 'U', $time['start_time']->sec),
+            date_create_from_format( 'U', $time['stop_time']->sec)
         );
     }
     return $time_rows;
@@ -365,7 +366,7 @@ function get_time_row(
         ) {
     //format values
 
-    $format = 'Y-m-d H:i:sO';
+    $format = 'Y-m-d H:i:s';
     $diff_time = $start_time->diff($stop_time);
     return "<td value=\"$customer_id\">$customer_name</td>" .
         "<td value=\"$project_id\">$project_name</td>" .

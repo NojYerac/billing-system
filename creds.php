@@ -83,7 +83,7 @@ function get_visible_clients() {
     switch ($_SESSION['user_priv']) {
     case 'Administrator':
         foreach ($all_customers as $doc) {
-                $customers[$doc['customer_name']] = $doc['_id'];
+                $customers[htmlentities($doc['customer_name'])] = $doc['_id'];
         }
         break;
     case 'Employee' || 'Customer':
