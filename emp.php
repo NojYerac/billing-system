@@ -44,7 +44,7 @@ function start_timer($project_id, $customer_id) {
         array(
             'project_id' => $project_id,
             'customer_id' => $customer_id,
-            'start_time' => (new DateTime())
+            'start_time' => prepare_datetime(new DateTime())
         )
     );
 }
@@ -53,7 +53,7 @@ function stop_timer($timer_id) {
     return update_one_document(
         'timer',
         array('_id' => (new MongoId($timer_id))),
-        array('stop_time' => (new DateTime()))
+        array('stop_time' => prepare_datetime(new DateTime()))
     );
 }
 
@@ -76,7 +76,7 @@ if (isset($_GET['action']) && $csrf_passed) {
         $timer_id = start_timer($_POST['project_selector'], $_POST['customer_selector']);
         if ($timer_id) {
             $_SESSION['timer_started'] = $timer_started = $timer_id;
-            $status = 'start timer successful';
+            $status = "Timer $timer_id started sucessfully";
         } else {
             $status = 'start timer failed';
         }
@@ -85,7 +85,7 @@ if (isset($_GET['action']) && $csrf_passed) {
         //stop the timer
         if (stop_timer($_POST['timer_id'])) {
             $_SESSION['timer_started'] = $timer_started = false;
-            $status = 'stop timer sucessful';
+            $status = "Timer ${_POST['timer_id']} sucessfully stopped";
         } else {
             $status = 'stop timer failed';
         }
@@ -189,8 +189,8 @@ $max_time->setTime(23, 59, 59);
 foreach (get_visible_clients() as $customer_name => $customer_id) {
     $table_rows .= get_time_rows_by_customer_and_datetime(
         (string)$customer_id,
-        $min_time,
-        $max_time
+        prepare_datetime($min_time),
+        prepare_datetime($max_time)
         );
 /*	foreach (get_all_documents('projects', array(
 		'customer_id' => (string)$customer_id)

@@ -84,4 +84,9 @@ function delete_one_document($collection, array $params) {
     return true;
 }
 
+function prepare_datetime($datetime) {
+	return new MongoDate($datetime->format('U'));
+}
+
+
 ?>

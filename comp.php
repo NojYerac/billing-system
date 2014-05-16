@@ -17,9 +17,8 @@ function tagify($tag_defs) {
         }
     }
     if (isset($innerHTML) && gettype($innerHTML) != 'string') {
-         var_dump($innerHTML);
          die();
-    } 
+    }
     //special case for script tags.
     if ($tag == 'script' && !isset($innerHTML)) {
         $innerHTML = '';
@@ -44,7 +43,7 @@ function inputify($type, $id, $addnl_attrs) {
             $label = tagify(
                 array(
                     'tag'    =>    'label',
-                    'for'    =>    $id, 
+                    'for'    =>    $id,
                     'innerHTML'=>    $addnl_attrs['label']
                 )
             );
@@ -69,9 +68,9 @@ function optionify($id, $innerHTML, $value, $addnl_attrs) {
     $tag_defs = array_merge(
         array(
             'tag' => 'option',
-	    'id' => $id,
-	    'innerHTML' => $innerHTML,
-	    'value' => $value
+        'id' => $id,
+        'innerHTML' => $innerHTML,
+        'value' => $value
         ),
         $addnl_attrs
     );
@@ -88,7 +87,7 @@ function selectify($id, array $options, array $addnl_attrs=array()) {
         $label = tagify(
             array(
                 'tag'    =>    'label',
-                'for'    =>    $id, 
+                'for'    =>    $id,
                 'innerHTML'=>    $addnl_attrs['label']
             )
         );
@@ -177,7 +176,7 @@ function get_body($tags, $addnl_attrs) {
 
 function get_default_head() {
     /*
-     * 
+     *
      */
     $script_tags = array(
         tagify(array(
@@ -198,7 +197,7 @@ function get_default_head() {
         tagify(array(
             'tag'    =>    'meta',
             'charset' =>    'UTF-8'
-        )), 
+        )),
         tagify(array(
             'tag'    =>    'meta',
             'name'    =>    'generator',
@@ -210,13 +209,13 @@ function get_default_head() {
 
 function pprint($html) {
     $html = preg_replace(
-        array('/>(?!\n)/', 
+        array('/>(?!\n)/',
         '/(.+)</'),
         array(">\n",
         "$1\n<"),
         $html);
     return $html;
-        
+
 }
 
 function get_customer_selector(array $addnl_attrs=array()) {
@@ -233,24 +232,24 @@ function get_customer_selector(array $addnl_attrs=array()) {
 }
 
 function get_project_options($customer_id) {
-	$options = optionify(
-		"project_options_null",
-		'Select a project',
-		'', array('selected' => 'selected')
-	);
-	$projects = get_all_documents(
-		'projects',
-		array('customer_id' => $customer_id, 'active' => true)
-	);
-	foreach ($projects as $doc) {
-		$project_id = htmlentities($doc['_id']);
-		$project_name = htmlentities($doc['project_name']);
-		$options .= optionify(
-			"project_option_$project_id",
-			$project_name,
-			$project_id, array());
-	}
-	return $options;
+    $options = optionify(
+        "project_options_null",
+        'Select a project',
+        '', array('selected' => 'selected')
+    );
+    $projects = get_all_documents(
+        'projects',
+        array('customer_id' => $customer_id, 'active' => true)
+    );
+    foreach ($projects as $doc) {
+        $project_id = htmlentities($doc['_id']);
+        $project_name = htmlentities($doc['project_name']);
+        $options .= optionify(
+            "project_option_$project_id",
+            $project_name,
+            $project_id, array());
+    }
+    return $options;
 }
 
 function get_project_selector($required=false) {
@@ -304,7 +303,7 @@ function get_customer_name_by_id($customer_id) {
 function get_time_rows_by_customer_and_datetime($customer_id, $min_time, $max_time) {
     $customer_name = get_customer_name_by_id($customer_id);
     $times = get_all_documents('timer', array(
-        'customer_id' => (new MongoId($customer_id)),
+        'customer_id' => $customer_id,
         'start_time' => array(
             '$gt' => $min_time,
             '$lt' => $max_time
@@ -317,17 +316,19 @@ function get_time_rows_by_customer_and_datetime($customer_id, $min_time, $max_ti
         if (!isset($project_names[$time['project_id']])) {
             $project_names[$time['project_id']] = get_project_name_by_id($time['project_id']);
         }
-        $time_rows .= get_time_row(
-            (string)$time['_id'],
+        $time_id = (string)$time['_id'];
+        $time_rows .= "<tr id=\"row_$time_id\">" . get_time_row(
+            $time_id,
             $customer_id,
             $customer_name,
             $time['project_id'],
             $project_names[$time['project_id']],
-            $time['start_time'],
-            $time['stop_time']
-        );
+            date_create_from_format('U', $time['start_time']->sec),
+            date_create_from_format('U', $time['stop_time']->sec)
+            ) . '<tr/>';
     }
     return $time_rows;
+    echo "<br/>" . htmlentities($time_rows);
 }
 
 function get_time_rows_by_project($project_id) {
@@ -352,7 +353,7 @@ function get_time_rows_by_project($project_id) {
     }
     return $time_rows;
 }
- 
+
 function get_time_row(
         $time_id,
         $customer_id,
@@ -363,7 +364,8 @@ function get_time_row(
         $stop_time
         ) {
     //format values
-    $format = 'Y-m-d H:i:s';
+
+    $format = 'Y-m-d H:i:sO';
     $diff_time = $start_time->diff($stop_time);
     return "<td value=\"$customer_id\">$customer_name</td>" .
         "<td value=\"$project_id\">$project_name</td>" .

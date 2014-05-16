@@ -11,7 +11,7 @@ function edit_time($time_id) {
             echo "Failed param name check\n";
             return false;
         } else if (strpos($pn, 'time')) {
-            $set[$pn] = (new DateTime())->setTimestamp($_POST[$pn]);
+            $set[$pn] = (new MongoDate($_POST[$pn]));
         } else {
             $set[$pn] = $_POST[$pn];
         }
@@ -38,8 +38,10 @@ function edit_time($time_id) {
             $customer_name,
             $set['project_id'],
             $project_name,
-            $set['start_time'],
-            $set['stop_time']
+            //(new DateTime())->setTimestamp($set['start_time']),
+            //(new DateTime())->setTimestamp($set['stop_time'])
+            date_create_from_format('U', $set['start_time']->sec),
+            date_create_from_format('U', $set['stop_time']->sec)
             );
     } else {
         echo "Update query failed\n";

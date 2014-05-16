@@ -142,11 +142,11 @@ function editTime(time_id) {
     var customerID = customerSelector.options[customerSelector.selectedIndex].value;
     var projectID = projectSelector.options[projectSelector.selectedIndex].value;
     var params = "csrf_token=" + encodeURIComponent(csrfToken) + "&action=edit" +
-	    "&time_id=" + encodeURIComponent(time_id) +
-	    "&customer_id=" + encodeURIComponent(customerID) +
-	    "&project_id=" + encodeURIComponent(projectID) +
-	    "&start_time=" + encodeURIComponent(startTime.getTime()/1000) +
-	    "&stop_time=" + encodeURIComponent(stopTime.getTime()/1000);
+        "&time_id=" + encodeURIComponent(time_id) +
+        "&customer_id=" + encodeURIComponent(customerID) +
+        "&project_id=" + encodeURIComponent(projectID) +
+        "&start_time=" + encodeURIComponent(startTime.getTime()/1000) +
+        "&stop_time=" + encodeURIComponent(stopTime.getTime()/1000);
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -168,12 +168,12 @@ function deleteTime(time_id) {
     var timeRow = document.getElementById('row_' + time_id);
     var csrfToken = document.getElementById('csrf_token').value;
     var params = "csrf_token=" + encodeURIComponent(csrfToken) +
-	    "&time_id=" + encodeURIComponent(time_id) +
-	    "&action=delete"
+        "&time_id=" + encodeURIComponent(time_id) +
+        "&action=delete"
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-    	    timeRow.parentNode.removeChild(timeRow);
+            timeRow.parentNode.removeChild(timeRow);
         }
     }
     xmlhttp.open(
