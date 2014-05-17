@@ -8,7 +8,7 @@ function get_login_form() {
         inputify(
             'text',
             'user_login',
-            array('label' => 'User name: ')
+            array('label' => 'User name: ', 'autofocus' => 'autofocus')
         ),  '<br/>',
         inputify(
             'password',

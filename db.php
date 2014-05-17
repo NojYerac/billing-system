@@ -88,5 +88,8 @@ function prepare_datetime($datetime) {
 	return new MongoDate($datetime->format('U'));
 }
 
+function prepare_timestamp($timestamp) {
+	return new MongoDate($timestamp);
+}
 
 ?>

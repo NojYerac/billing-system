@@ -187,3 +187,36 @@ function deleteTime(time_id) {
     xmlhttp.send(params);
 }
 
+function filterRows() {
+    var timeTable = document.getElementById('time_table').firstChild;
+    var minTime = new Date(document.getElementById('filter_min_time').value);
+    var maxTime = new Date(document.getElementById('filter_max_time').value);
+    var customerSelector = document.getElementById('filter_customer_selector');
+    var customerId = customerSelector.options[
+            customerSelector.selectedIndex
+        ].value;
+    var params = 'customer_id=' + encodeURIComponent(customerId) + '&' +
+        'min_time=' + encodeURIComponent(minTime.getTime()/1000) + '&' +
+        'max_time=' + encodeURIComponent(maxTime.getTime()/1000);
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            if (xmlhttp.responseText != 'failed') {
+				var headerRow = timeTable.firstChild.cloneNode();
+				headerRow.innerHTML = timeTable.firstChild.innerHTML;
+				timeTable.innerHTML = '';
+				timeTable.appendChild(headerRow);
+				timeTable.innerHTML += xmlhttp.responseText;
+			}
+		}
+	}
+    xmlhttp.open(
+        "POST",
+        "ajax/get-rows.php",
+        true
+    );
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("Content-length", params.length);
+    xmlhttp.setRequestHeader("Connection", "close");
+    xmlhttp.send(params);
+}

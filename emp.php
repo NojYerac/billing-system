@@ -232,6 +232,7 @@ $filter_times_form = formify(
 	'javascript:void(0)',
 	array(
 		$customer_selector,
+		'<br/>',
 		$min_datetime_input,
 		$max_datetime_input,
 		$filter_submit
@@ -273,7 +274,7 @@ $table_headers = '<tr><th>Customer</th><th>Project</th><th>Start time</th>' .
 $show_times = tagify(array(
 	'tag' => 'table',
 	'class' => 'times',
-	'id' => 'times_table',
+	'id' => 'time_table',
         'innerHTML' => $table_headers . $table_rows
         )
 );

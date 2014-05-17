@@ -22,7 +22,7 @@ $csrf_passed = (
 //prevent unauthorized access
 if (!isset($_SESSION['user_priv']) || $_SESSION['user_priv'] != 'Administrator') {
 	http_response_code(302);
-	header('Location: ' . BASE_URL . 'login.php';
+	header('Location: ' . BASE_URL . 'login.php');
     echo 'Not Authorized';
     exit();
 }
