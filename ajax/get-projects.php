@@ -30,7 +30,8 @@ if (isset($_GET['custID'])) {
 		$options .= get_project_options($_GET['custID']);
 	} else {
 		http_response_code(403);
-		die('Forbidden');
+		echo 'Forbidden';
+		exit();
 	}
 } else {
 	foreach ($customers as $customer_name => $customer_id) {

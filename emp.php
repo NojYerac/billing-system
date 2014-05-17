@@ -13,7 +13,8 @@ if (!isset($_SESSION['user_priv']) ||
         $_SESSION['user_priv'],
         array('Administrator', 'Employee')
     )) {
-    http_response_code(401);
+	http_response_code(302);
+	header('Location: ' . BASE_URL . 'login.php');
     echo 'Not Authorized';
     exit();
 }
@@ -67,7 +68,7 @@ function create_project($customer_id, $project_name) {
         )
     );
 }
-//var_dump($_POST);
+
 //handle database changes...
 if (isset($_GET['action']) && $csrf_passed) {
     switch ($_GET['action']) {
@@ -124,6 +125,7 @@ $csrf_input = inputify(
     array('value' => $new_csrf_token)
 );
 
+//define timer forms
 $timer_form_start = formify(
     'POST',
     '?action=start+timer',
@@ -154,6 +156,8 @@ $emp_forms['timer_form'] = array(
     'innerHTML' => ($timer_started?$timer_form_stop:$timer_form_start)
 );
 
+
+//define new project form
 $emp_forms['new_project'] = array(
     'title' => 'New project',
     'innerHTML' => formify(
@@ -180,12 +184,80 @@ $emp_forms['new_project'] = array(
     )
 );
 
-$format = 'Y-m-d H:i:s';
+//define show_tables
+$format = 'Y-m-d\TH:i:s';
 $table_rows = '';
 $min_time = (new DateTime())->modify('first day of this month');
 $min_time->setTime(0, 0, 0);
 $max_time = (new DateTime())->modify('last day of this month');
 $max_time->setTime(23, 59, 59);
+
+////filter form
+$min_datetime_input = inputify(
+	'datetime-local',
+	'min_time',
+	array(
+		'label' => 'From: ',
+		'id' => 'filter_min_time',
+		'value' => $min_time->format($format),
+	)
+);
+
+$max_datetime_input = inputify(
+	'datetime-local',
+	'max_time',
+	array(
+		'label' => 'Until: ',
+		'id' => 'filter_max_time',
+		'value' => $max_time->format($format),
+	)
+);
+
+//$project_selector = get_project_selector();
+
+$customer_selector = get_customer_selector(array(), 'filter_');
+
+$filter_submit = inputify(
+	'submit',
+	'filter_submit',
+	array(
+		'value' => 'Filter',
+		'onclick' => 'filterRows()'
+	)
+);
+
+
+$filter_times_form = formify(
+	'GET',
+	'javascript:void(0)',
+	array(
+		$customer_selector,
+		$min_datetime_input,
+		$max_datetime_input,
+		$filter_submit
+	),
+	array(
+		'id' =>	'filter_times_form',
+		'class' => 'hidden',
+	)
+);
+
+$filter_times_div = tagify(
+	array(
+		'tag' => 'div',
+		'id' => 'filter_times_div',
+		'innerHTML' => 	tagify(
+			array(
+				'tag' => 'button',
+				'id' => 'toggle_filter_button',
+				'onclick' => 'toggleVisible(\'filter_times_form\')',
+				'innerHTML' => 'Filter options'
+			)
+		) . $filter_times_form
+	)
+);
+
+////build table
 foreach (get_visible_clients() as $customer_name => $customer_id) {
     $table_rows .= get_time_rows_by_customer_and_datetime(
         (string)$customer_id,
@@ -194,22 +266,24 @@ foreach (get_visible_clients() as $customer_name => $customer_id) {
         );
 }
 
+
 $table_headers = '<tr><th>Customer</th><th>Project</th><th>Start time</th>' .
 	'<th>Stop time</th><th>Difference</th><th>E</th><th>D</th></tr>';
 
 $show_times = tagify(array(
 	'tag' => 'table',
 	'class' => 'times',
-	'id' => 'all_times_table',
+	'id' => 'times_table',
         'innerHTML' => $table_headers . $table_rows
         )
 );
 
 $emp_forms['show_times'] = array(
     'title' => 'Show all times',
-    'innerHTML' => $show_times
+    'innerHTML' => $filter_times_div . $show_times
 );
 
+//define compose invoice
 $compose_invoice = '';
 
 $emp_forms['compose_invoice'] = array(
