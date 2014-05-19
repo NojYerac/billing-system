@@ -165,12 +165,22 @@ $emp_forms['new_project'] = array(
         '?action=new+project',
         array(
             $csrf_input,
-            get_customer_selector(array('required' => 'required', 'name' => 'customer_id')), '<br/>',
+            get_customer_selector(array('required' => 'required', 'name' => 'customer_id', 'onchange' => 'getPrice()'), 'project_'), '<br/>',
             inputify('text', 'project_name', array(
                 'required' => 'required',
 		'label' => 'Project name: ',
                 )
-            ), '<br/>',
+			), '<br/>',
+			inputify('textarea', 'project_notes', array(
+				'label' => 'Project notes: '
+				)
+			), '<br/>',
+			inputify('number', 'project_price', array(
+				'label' => 'Price: ',
+				'step' => '0.01',
+				'reqired' => 'required'
+				)
+			),
             inputify('checkbox', 'start_timer', array(
                 'label' => 'Start timer: '
                 )
@@ -199,7 +209,7 @@ $min_datetime_input = inputify(
 	array(
 		'label' => 'From: ',
 		'id' => 'filter_min_time',
-		'value' => $min_time->format($format),
+		'value' => $min_time->format($format)
 	)
 );
 
@@ -280,16 +290,46 @@ $show_times = tagify(array(
 );
 
 $emp_forms['show_times'] = array(
-    'title' => 'Show all times',
+    'title' => 'Show times',
     'innerHTML' => $filter_times_div . $show_times
 );
 
 //define compose invoice
-$compose_invoice = '';
+$invoicing_customer_selector = get_customer_selector(
+	array('name' => 'customer_id', 'required' => 'required'), 'invoicing_');
 
-$emp_forms['compose_invoice'] = array(
-    'title' => 'Create invoice',
-    'innerHTML' => $compose_invoice
+$invoicing_month = inputify(
+	'month',
+	'invoice_month',
+	array('required' => 'required')
+);
+
+$invoicing_submit = inputify(
+	'submit',
+	'invoicing_submit',
+	array(
+		'value' => 'Create',
+	)
+);
+
+$invoicing_form = formify(
+	'POST',
+	'ajax/invoice.php',
+	array(
+		$csrf_input,
+		$invoicing_customer_selector,
+		'<br/>',
+		$invoicing_month,
+		$invoicing_submit
+	),
+	array(
+		'id' =>	'invoicing_times_form',
+	)
+);
+
+$emp_forms['invoicing'] = array(
+    'title' => 'Invoicing',
+    'innerHTML' => $invoicing_form
 );
 
 //assemble buttons and forms

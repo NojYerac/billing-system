@@ -59,6 +59,7 @@ if (!isset($_SESSION['user_login']) || !isset($_SESSION['user_priv']) ||
 }
 
 if (!isset($_POST['csrf_token']) ||
+	!isset($_SESSION['csrf_token']) ||
     $_POST['csrf_token'] != $_SESSION['csrf_token']) {
     http_response_code(500);
     echo "CSRF check failed!";

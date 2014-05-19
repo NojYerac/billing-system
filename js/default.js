@@ -35,6 +35,24 @@ function getProjects(suffix) {
     xmlhttp.send();
 }
 
+function getPrice() {
+	var customerSelector = document.getElementById('project_customer_selector');
+	var customerId = customerSelector.options[customerSelector.selectedIndex].value;
+	var priceInput = document.getElementById('project_price');
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			priceInput.value = xmlhttp.responseText;
+		}
+	}
+	xmlhttp.open(
+		"GET",
+		"ajax/get-price.php?customer_id=" + customerId,
+		true
+	);
+	xmlhttp.send();
+}
+
 window.savedTr = {};
 
 function getIndexByValue(selectElement, value) {
