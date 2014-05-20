@@ -85,20 +85,24 @@ foreach ($billable_times as $time) {
 	}
 	$line_items[$time['project_id']]['quantity'] += $interval;
 }
+$total = 0;
 $rows = "<tr><td>Project</td><td>Note</td><td>Quantity</td><td>Price</td><td>Total</td></tr>";
 foreach ($line_items as $item) {
 	$item['quantity'] = seconds_to_hours_rounded((float)$item['quantity']);
 //	echo $item['project_name'] . " => " . $item['quantity'] . '<br/>';
 
-
+	$sub_total =  (float)$item['price'] * (float)$item['quantity'];
+	$total += $sub_total;
 	$rows .= "<tr><td>${item['project_name']}</td><td>${item['notes']}</td>" .
 		"<td>${item['quantity']} ${item['unit']}(s)</td>" .
 		"<td>$${item['price']}/${item['unit']}</td>" .
-		"<td>$" . (float)$item['price'] * (float)$item['quantity'] . "</td></tr>";
+		"<td>$" . $sub_total . "</td></tr>";
 }
 
 echo $customer_contact;
 
 echo "<table style=\"width:80%;text-align:center\">$rows</table>";
+
+echo "<h4>Total: $$total</h4>"
 
 ?>
