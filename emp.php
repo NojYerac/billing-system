@@ -58,15 +58,26 @@ function stop_timer($timer_id) {
     );
 }
 
-function create_project($customer_id, $project_name) {
+function create_project($id, $name, $notes, $price) {
     return insert_one_document(
         'projects',
         array(
-            'customer_id' => $customer_id,
-	    'project_name' => $project_name,
-	    'active' => true
+            'customer_id' => $id,
+			'project_name' => $name,
+			'project_notes' => $notes,
+			'project_price' => $price,
+			'active' => true
         )
     );
+}
+
+function check_reqd_post_params($reqd_params) {
+	foreach ($reqd_params as $param) {
+		if (!isset($_POST[$param]) || $_POST[$param] == '') {
+			return false;
+		}
+	}
+	return true;
 }
 
 //handle database changes...
@@ -92,9 +103,18 @@ if (isset($_GET['action']) && $csrf_passed) {
         }
         break;
     case 'new project':
-        $project_id = create_project(
+		$reqd_params = array(
+			'customer_id',
+			'project_name',
+			'project_notes',
+			'project_price'
+		);
+		check_reqd_post_params($reqd_params);
+		$project_id = create_project(
             $_POST['customer_id'],
-            $_POST['project_name']
+			$_POST['project_name'],
+			$_POST['project_notes'],
+			$_POST['project_price']
             );
         if ($project_id) {
             $status = 'create new project sucessful';

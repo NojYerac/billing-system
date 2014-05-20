@@ -31,6 +31,8 @@ if (!isset($_POST['customer_id']) || !isset($_POST['invoice_month'])) {
 }
 //($_REQUEST); echo '<hr/>';
 
+$customer_contact = '';
+
 $min_time = (new DateTime($_POST['invoice_month'] . ' UTC'));
 $max_time = (clone $min_time);
 $max_time->modify('last day of this month');
@@ -59,8 +61,8 @@ function new_line_item($project_id) {
 	);
 	return array(
 		'project_name' => $project['project_name'],
-		'notes' => $project['notes'],
-		'price' => $project['price'],
+		'notes' => $project['project_notes'],
+		'price' => $project['project_price'],
 		'quantity' => 0,
 		'unit' => 'hour',
 	);
@@ -83,10 +85,20 @@ foreach ($billable_times as $time) {
 	}
 	$line_items[$time['project_id']]['quantity'] += $interval;
 }
-
+$rows = "<tr><td>Project</td><td>Note</td><td>Quantity</td><td>Price</td><td>Total</td></tr>";
 foreach ($line_items as $item) {
 	$item['quantity'] = seconds_to_hours_rounded((float)$item['quantity']);
-	echo $item['project_name'] . " => " . $item['quantity'] . '<br/>';
+//	echo $item['project_name'] . " => " . $item['quantity'] . '<br/>';
+
+
+	$rows .= "<tr><td>${item['project_name']}</td><td>${item['notes']}</td>" .
+		"<td>${item['quantity']} ${item['unit']}(s)</td>" .
+		"<td>$${item['price']}/${item['unit']}</td>" .
+		"<td>$" . (float)$item['price'] * (float)$item['quantity'] . "</td></tr>";
 }
+
+echo $customer_contact;
+
+echo "<table style=\"width:80%;text-align:center\">$rows</table>";
 
 ?>
