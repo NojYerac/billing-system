@@ -31,7 +31,38 @@ if (!isset($_POST['customer_id']) || !isset($_POST['invoice_month'])) {
 }
 //($_REQUEST); echo '<hr/>';
 
-$customer_contact = '';
+$cust = get_one_document('clients', array('_id' => (new MongoId($_POST['customer_id']))));
+
+$customer_contact = 
+	"<div style=\"float:left;width:25%\" id=\"customer_contact\">" .
+	"<p id=\"customer_contact_name\">" .
+	htmlentities($cust['customer_name']) .
+	"</p><p id=\"customer_contact_address\">" .
+	str_replace("\n", "<br/>", htmlentities($cust['customer_address'])) .
+	"</p><p id=\"customer_contact_phone\">" .
+	htmlentities($cust['customer_phone']) .
+	"</p><p id=\"customer_contact_email\">" 
+	. $cust['customer_email'] .
+	"</p></div>";
+
+$comp = array(
+	'company_name' => "My example company, Inc.",
+	'company_address' => "123 Street Rd.\nSte. 456\nCityville, ST 78901",
+	'company_email' => "someone@somewhere.so",
+	'company_phone' => '(123) 456-7890'
+);
+
+$company_contact = 
+	"<div style=\"float:left;width:25%;text-align:right\" id=\"company_contact\">" .
+	"<p id=\"company_contact_name\">" .
+	htmlentities($comp['company_name']) .
+	"</p><p id=\"company_contact_address\">" .
+	str_replace("\n", "<br/>", htmlentities($comp['company_address'])) .
+	"</p><p id=\"company_contact_phone\">" .
+	htmlentities($comp['company_phone']) .
+	"</p><p id=\"company_contact_email\">" 
+	. $comp['company_email'] .
+	"</p></div>";
 
 $min_time = (new DateTime($_POST['invoice_month'] . ' UTC'));
 $max_time = (clone $min_time);
@@ -99,10 +130,16 @@ foreach ($line_items as $item) {
 		"<td>$" . $sub_total . "</td></tr>";
 }
 
-echo $customer_contact;
 
-echo "<table style=\"width:80%;text-align:center\">$rows</table>";
 
-echo "<h4>Total: $$total</h4>"
+echo "<div><h1 style=\"text-align:center\">Invoice for ${_POST['invoice_month']}</h1>" .
+	"<div id=\"contact_container\" style=\"width:80%;margin-left:10%;margin-right:10%\">" . $customer_contact .
+	"<div style=\"float:left;width:50%\">&nbsp;</div>" . $company_contact . "</div></div>";
+
+
+
+echo "<table style=\"margin-left:10%;margin-right:10%;width:80%;text-align:center;border:1px solid black\">$rows</table>";
+
+echo "<h4 style=\"margin-right:10%;text-align:right\">Total: $$total</h4>";
 
 ?>
