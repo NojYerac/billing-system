@@ -33,6 +33,10 @@ if (!isset($_POST['customer_id']) || !isset($_POST['invoice_month'])) {
 
 $cust = get_one_document('clients', array('_id' => (new MongoId($_POST['customer_id']))));
 
+$cust['invoice_prefix'] = 'ABC';
+
+$invoice_num = $cust['invoice_prefix'] . '_' . $_POST['invoice_month'];
+
 $customer_contact = 
 	"<div style=\"float:left;width:25%\" id=\"customer_contact\">" .
 	"<p id=\"customer_contact_name\">" .
@@ -131,15 +135,32 @@ foreach ($line_items as $item) {
 }
 
 
+$html = "<body>" .
+	"<div><h1 style=\"text-align:center\">" .
+	"Invoice for" . $_POST['invoice_month'] .
+	"</h1><div id=\"contact_container\" " .
+	"style=\"width:80%;margin-left:10%;margin-right:10%\">" .
+	$customer_contact .	"<div style=\"float:left;width:50%\">&nbsp;</div>" .
+	$company_contact . "</div></div>" .
+	"<table style=\"margin-left:10%;margin-right:10%;width:80%;" .
+	"text-align:center;border:1px solid black\">$rows</table>" .
+	"<h4 style=\"margin-right:10%;text-align:right\">Total: $$total</h4>" .
+	"</body>";
 
-echo "<div><h1 style=\"text-align:center\">Invoice for ${_POST['invoice_month']}</h1>" .
-	"<div id=\"contact_container\" style=\"width:80%;margin-left:10%;margin-right:10%\">" . $customer_contact .
-	"<div style=\"float:left;width:50%\">&nbsp;</div>" . $company_contact . "</div></div>";
+$file = BASE_DIR . '/invoices/' . $invoice_num . '.pdf';
+$url = BASE_URL . '/invoices/' . $invoice_num . '.pdf';
 
-
-
-echo "<table style=\"margin-left:10%;margin-right:10%;width:80%;text-align:center;border:1px solid black\">$rows</table>";
-
-echo "<h4 style=\"margin-right:10%;text-align:right\">Total: $$total</h4>";
+//if (isset($_GET['action']) && $_GET['action'] == 'create+pdf') {
+	include('../mpdf/mpdf.php');
+	$mpdf = new mPDF();
+	$mpdf->WriteHTML($html);
+	$mpdf->Output($file, 'F');
+	http_response_code(302);
+	header('Location: ' . $url);
+	exit();
+	
+/*} else {
+	echo $html;
+}*/
 
 ?>
