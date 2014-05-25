@@ -48,7 +48,8 @@ if (isset($_GET['action']) && $csrf_passed) {
             $_POST['new_customer_name'],
             $_POST['new_customer_rate'],
             $_POST['new_customer_address'],
-            $_POST['new_customer_email']
+			$_POST['new_customer_email'],
+			$_POST['new_customer_prefix']
             )
         ) {
             $status = "add customer successful";
@@ -144,7 +145,13 @@ $add_customer_form = formify(
             'label' => 'Name: ',
             'required' => 'required',
             )
-        ), '<br/>',
+		), '<br/>',
+		inputify('text', 'new_customer_prefix', array(
+			'label' => 'Invoice number prefix: ',
+			'required' => 'required',
+			'pattern' => '[A-Z0-9_-]+'
+			)
+		), '<br/>',
         inputify('number', 'new_customer_rate', array(
             'label' => 'Default rate: ',
             'required' => 'required',

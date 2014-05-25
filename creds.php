@@ -108,20 +108,21 @@ function get_visible_clients() {
     return $customers;
 }
 
-function add_customer($name, $rate, $address, $email) {
+function add_customer($name, $rate, $address, $email, $invoice_prefix) {
     return insert_one_document('clients', array(
         'customer_name' => $name,
         'customer_rate' => floatval($rate),
         'customer_address' => $address,
         'customer_email' => $email,
-        'customer_created' => date('U')
+		'customer_created' => date('U'),
+		'invoice_prefix' => $invoice_prefix
         )
     );
 }
 
 function edit_customer($id, array $updates) {
     return update_one_document('clients', array(
-        '_id' => $id
+        '_id' => (new MongoId($id))
         ),
         $updates
     );

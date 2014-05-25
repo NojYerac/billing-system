@@ -238,3 +238,42 @@ function filterRows() {
     xmlhttp.setRequestHeader("Connection", "close");
     xmlhttp.send(params);
 }
+
+function generateInvoice() {
+	var invoiceListDiv = document.getElementById('invoice_list_div');
+	var customerSelector = document.getElementById(
+			'invoicing_customer_selector'
+			);
+	var invoiceMonth = document.getElementById('invoice_month').value;
+	var customerId = customerSelector.options[
+			customerSelector.selectedIndex
+		].value;
+	var csrfToken = document.getElementById('csrf_token').value;
+	var params = 'customer_id=' + encodeURIComponent(customerId) + '&' +
+		'invoice_month=' + encodeURIComponent(invoiceMonth) + '&' +
+		'csrf_token=' + encodeURIComponent(csrfToken);
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			var newInvoiceLinkId = /id="([^"]+)/.exec(xmlhttp.responseText)[1];
+			console.log(newInvoiceLinkId);
+			var oldInvoiceLink = document.getElementById(newInvoiceLinkId);
+			if (oldInvoiceLink) {
+				console.log(oldInvoiceLink);
+				invoiceListDiv.removeChild(oldInvoiceLink.nextSibling);
+				invoiceListDiv.removeChild(oldInvoiceLink);
+			}
+			invoiceListDiv.innerHTML += xmlhttp.responseText + '<br/>';
+		}
+	}
+	xmlhttp.open(
+			"POST",
+			"ajax/generate-invoice.php",
+			true
+	);
+	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("Content-length", params.length);
+    xmlhttp.setRequestHeader("Connection", "close");
+    xmlhttp.send(params);
+}
+

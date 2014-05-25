@@ -33,9 +33,11 @@ if (!isset($_POST['customer_id']) || !isset($_POST['invoice_month'])) {
 
 $cust = get_one_document('clients', array('_id' => (new MongoId($_POST['customer_id']))));
 
-$cust['invoice_prefix'] = 'ABC';
+//$cust['invoice_prefix'] = 'ABC';
 
-$invoice_num = $cust['invoice_prefix'] . '_' . $_POST['invoice_month'];
+$invoice_num = htmlentities(
+	$cust['invoice_prefix'] . '_' . $_POST['invoice_month']
+);
 
 $customer_contact = 
 	"<div style=\"float:left;width:25%\" id=\"customer_contact\">" .
@@ -137,8 +139,9 @@ foreach ($line_items as $item) {
 
 $html = "<body>" .
 	"<div><h1 style=\"text-align:center\">" .
-	"Invoice for" . $_POST['invoice_month'] .
-	"</h1><div id=\"contact_container\" " .
+	"Invoice for " . $_POST['invoice_month'] .
+	"</h1><h4>Invoice number: $invoice_num</h4>" .
+	"<div id=\"contact_container\" " .
 	"style=\"width:80%;margin-left:10%;margin-right:10%\">" .
 	$customer_contact .	"<div style=\"float:left;width:50%\">&nbsp;</div>" .
 	$company_contact . "</div></div>" .
@@ -150,17 +153,40 @@ $html = "<body>" .
 $file = BASE_DIR . '/invoices/' . $invoice_num . '.pdf';
 $url = BASE_URL . '/invoices/' . $invoice_num . '.pdf';
 
+$doc = get_one_document('invoices', array('file' => $file));
+
+
+$params  = array(
+	'invoice_num' => $invoice_num,
+	'paid' => false,
+	'url' => $url,
+	'file' => $file,
+	'total' => $total
+);
+if ($doc) {
+	update_one_document(
+		'invoices',
+		array('_id' => $doc['_id']),
+		$params
+	);
+	$params['_id'] = $doc['_id'];
+} else {
+	$doc_id = insert_one_document('invoices', $params);
+	$params['_id'] = $doc_id;
+}
+
 //if (isset($_GET['action']) && $_GET['action'] == 'create+pdf') {
 	include('../mpdf/mpdf.php');
 	$mpdf = new mPDF();
 	$mpdf->WriteHTML($html);
 	$mpdf->Output($file, 'F');
-	http_response_code(302);
-	header('Location: ' . $url);
-	exit();
+	//http_response_code(302);
+	//header('Location: ' . $url);
 	
 /*} else {
 	echo $html;
 }*/
 
+echo get_invoice_link($params);
+exit();
 ?>

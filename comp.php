@@ -380,4 +380,16 @@ function get_time_row(
         " onclick=\"if (confirm('Delete row?')) {deleteTime('$time_id')}\"/>";
 }
 
+function get_invoice_link($invoice) {
+	$tag_defs = array(
+		'tag' => 'a',
+		'target' => '_blank',
+		'class' => 'invoice_link_' . ($invoice['paid']?'paid':'unpaid'),
+		'href' => $invoice['url'],
+		'innerHTML' => $invoice['invoice_num'] .'&nbsp;$'. $invoice['total'],
+		'id' => 'invoice_link_' . (string)$invoice['_id'],
+	);
+	return tagify($tag_defs);
+}
+
 ?>
