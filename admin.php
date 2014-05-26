@@ -1,7 +1,6 @@
 <?php
 require_once('config.php');
 require_once('db.php');
-//require_once('filter.php');
 require_once('comp.php');
 require_once('creds.php');
 require_once('csrf.php');
@@ -56,16 +55,25 @@ if (isset($_GET['action']) && $csrf_passed) {
         } else {
             $status =  "add customer failed";
         }
-        break;
-/*    case 'new filter':
-        echo 'new filter';
-        // new filter logic
-        break;
-    case 'remove filter':
-        echo 'remove filter';
-        // remove filter logic
-        break;*/
-    default:
+		break;
+    case 'edit customer':
+		if(edit_customer(
+			$_POST['customer_id'],
+			array(
+				'customer_name' => $_POST['edit_customer_name'],
+				'customer_rate' => $_POST['edit_customer_rate'],
+				'customer_address' => $_POST['edit_customer_address'],
+				'customer_email' => $_POST['edit_customer_email'],
+				'invoice_prefix' => $_POST['edit_customer_prefix']
+				)
+            )
+        ) {
+            $status = "edit customer successful";
+        } else {
+            $status =  "edit customer failed";
+        }
+		break;
+	default:
         die("<br/>invalid action: csrf_passed=" . $csrf_passed);
     }
 }
@@ -78,24 +86,6 @@ $csrf_input = inputify(
     array('value' => $new_csrf_token)
 );
 
-/*
-$user_priv_options = tagify(array(
-    'tag' => 'option',
-    'innerHTML' => 'Privilege Level',
-    'selected' => 'selected'
-    ));
-
-
-foreach (array('Administrator', 'Employee', 'Customer') as $priv) {
-    $user_priv_options .= tagify(array(
-        'tag'	=>	'option',
-        'label'	=>	"user_priv_option_$priv",
-        'id'	=>	"user_priv_option_$priv",
-        'innerHTML'=>	$priv
-    ));
-}
- */
-
 $add_user_form = formify(
     'POST', BASE_URL . '/admin.php?action=add+user',
     array(
@@ -106,18 +96,6 @@ $add_user_form = formify(
             'verify_new_user_pass',
             array('label' => 'Verify Password: ')
         ), '<br/>',
-/*    tagify(array(
-        'tag'	=> 'lable',
-        'for'	=> 'new_user_priv',
-        'innerHTML'=> 'Privileges: '
-    )),
-    tagify(array(
-        'tag'	=> 'select',
-        'id'	=> 'new_user_priv',
-        'name'	=> 'new_user_priv',
-        'innerHTML'=> $user_priv_options
-    )), '<br/>',
- */
         selectify('new_user_priv',
             array(
                 'Administrator' => 'Administrator',
@@ -140,7 +118,7 @@ $add_customer_form = formify(
     'POST', BASE_URL . '/admin.php?action=add+customer',
     array(
         //inputs
-	$csrf_input,
+		$csrf_input,
         inputify('text', 'new_customer_name', array(
             'label' => 'Name: ',
             'required' => 'required',
@@ -192,62 +170,145 @@ $admin_forms['add_customer'] = array(
     'title' => 'Add customer',
     'innerHTML' => $add_customer_form
 );
-/*
-$new_filter_form = formify(
-    'POST', BASE_URL . '/admin.php?action=new+filter',
+
+//edit customer
+
+$edit_customer_form = formify(
+	'POST', BASE_URL . '/admin.php?action=edit+customer',
     array(
-        inputify('hidden', 'csrf_token', array('value' => $new_csrf_token)),
-        inputify('text', 'new_filter_title', array('label' => 'Title: ', 'placeholder' => 'title')), '<br/>',
-        inputify('text', 'new_filter_regex', array('label' => 'Regex: ', 'placeholder' => '/(.*)/')), '<br/>',
-        inputify('text', 'new_filter_replacement', array('label' => 'Replacement: ', 'placeholder' => '$1')), '<br/>',
-        tagify(
-            array(
-                'tag' => 'label',
-                'id' => 'new_filter_note_label',
-                'for' => 'new_filter_note',
-                'innerHTML' => 'Note: '
+        //inputs
+		$csrf_input,
+		get_customer_selector(
+			array(
+				'required' => 'required',
+				'name' => 'customer_id',
+				'onchange' => 'fillCustomerDetails(\'edit_\')'
+			), 'edit_'
+		),
+		'<br/>',
+		inputify('text', 'edit_customer_name', array(
+			'label' => 'Name: ',
+			'required' => 'required'
+			)
+		), '<br/>',
+		inputify('text', 'edit_customer_prefix', array(
+			'label' => 'Invoice number prefix: ',
+			'required' => 'required',
+			'pattern' => '[A-Z0-9_-]+'
+			)
+		), '<br/>',
+        inputify('number', 'edit_customer_rate', array(
+            'label' => 'Default rate: ',
+            'required' => 'required'
+            )
+        ), '<br/>',
+        tagify(array(
+            'tag' => 'label',
+            'for' => 'edit_customer_address',
+            'innerHTML' => 'Address: '
             )
         ),
-        tagify(
-            array(
-                'tag' => 'textarea',
-                'id' => 'new_filter_note',
-                'name' => 'new_filter_note',
-                'innerHTML' => ''
+        tagify(array(
+            'tag' => 'textarea',
+            'id' => 'edit_customer_address',
+            'name' => 'edit_customer_address',
+            'innerHTML'=>'',
+            'rows' => '5',
+            'cols' => '40'
             )
         ), '<br/>',
-        inputify('submit', 'submit', array('value' => 'Create Filter'))
+        inputify('text', 'edit_customer_email', array(
+            'label' => 'Email: '
+            )
+        ), '<br/>',
+        inputify('submit', 'submit_edit_customer', array(
+            'value' => 'Edit customer'
+            )
+        )
     ),
-    array('enctype' => 'multipart/form-data', 'id' => 'new_filter_form')
-);
-
-$admin_forms['new_filter'] = array(
-    'title' => 'New filter',
-    'innerHTML' => $new_filter_form
-);
-
-$remove_filter_form = formify(
-    'POST', BASE_URL . '/admin.php?action=remove+filter',
     array(
-        inputify('hidden', 'csrf_token', array('value' => $new_csrf_token)),
-        tagify(
-            array(
-                'tag' => 'select',
-                'name' => 'remove_filter_id[]',
-                'multiselect' => 'multiselect',
-                'innerHTML' => get_filter_selections()
-            )
-        ), '<br/>',
-        inputify('submit', 'submit', array('value' => 'Remove'))
-    ),
-    array('id' => 'remove_filter_form')
+        //addnl_attrs
+        'autocomplete' => 'off'
+    )
 );
 
-$admin_forms['remove_filter'] = array(
-    'title' => 'Remove filter',
-    'innerHTML' => $remove_filter_form
+
+$admin_forms['edit_customer'] = array(
+	'title' => 'Edit customer',
+	'innerHTML' => $edit_customer_form
 );
- */
+//define invoicing
+
+////define invoice list.
+
+function get_invoice_links() {
+	$invoice_links = '';
+	$invoices = get_all_documents('invoices', array());
+	foreach ($invoices as $invoice) {
+		$invoice_links .= get_invoice_link($invoice) . '<br/>';
+	}
+	return $invoice_links;
+}
+
+$invoice_list = tagify(
+	array(
+		'tag' => 'div',
+		'id' => 'invoice_list_div',
+		'innerHTML' => get_invoice_links()
+	)
+);
+
+//define compose invoice
+$invoicing_customer_selector = get_customer_selector(
+	array(
+		'name' => 'customer_id',
+		'required' => 'required'
+	),
+	'invoicing_'
+);
+
+$invoicing_month = inputify(
+	'month',
+	'invoice_month',
+	array(
+		'label' => 'Month: ',
+		'required' => 'required',
+		'value' => (new DateTime())->format('Y-m')
+	)
+);
+
+$generate_invoice_button= tagify(
+	array(
+		'tag' => 'button',
+		'onclick' => 'generateInvoice()',
+		'innerHTML' => 'Generate invoice',
+		'id' => 'generate_invoice_button'
+	)
+);
+
+$invoicing_form = formify(
+	'POST',
+	'javascript:void(0)',
+	array(
+		$csrf_input,
+		$invoicing_customer_selector,
+		'<br/>',
+		$invoicing_month,
+		'<br/>',
+		$generate_invoice_button
+	),
+	array(
+		'id' =>	'invoicing_times_form',
+	)
+);
+
+$admin_forms['invoicing'] = array(
+    'title' => 'Invoicing',
+    'innerHTML' => $invoice_list . '<hr/>' . $invoicing_form
+);
+
+//create buttons and forms
+
 $buttons = '';
 
 $admin_forms_divs = '';

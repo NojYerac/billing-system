@@ -40,7 +40,7 @@ $invoice_num = htmlentities(
 );
 
 $customer_contact = 
-	"<div style=\"float:left;width:25%\" id=\"customer_contact\">" .
+	"<div style=\"float:left;width:50%\" id=\"customer_contact\">" .
 	"<p id=\"customer_contact_name\">" .
 	htmlentities($cust['customer_name']) .
 	"</p><p id=\"customer_contact_address\">" .
@@ -59,7 +59,7 @@ $comp = array(
 );
 
 $company_contact = 
-	"<div style=\"float:left;width:25%;text-align:right\" id=\"company_contact\">" .
+	"<div style=\"float:left;width:50%;text-align:right\" id=\"company_contact\">" .
 	"<p id=\"company_contact_name\">" .
 	htmlentities($comp['company_name']) .
 	"</p><p id=\"company_contact_address\">" .
@@ -123,7 +123,7 @@ foreach ($billable_times as $time) {
 	$line_items[$time['project_id']]['quantity'] += $interval;
 }
 $total = 0;
-$rows = "<tr><td>Project</td><td>Note</td><td>Quantity</td><td>Price</td><td>Total</td></tr>";
+$rows = "<tr><th>Project</th><th>Note</th><th>Quantity</th><th>Price</th><th>Total</th></tr>";
 foreach ($line_items as $item) {
 	$item['quantity'] = seconds_to_hours_rounded((float)$item['quantity']);
 //	echo $item['project_name'] . " => " . $item['quantity'] . '<br/>';
@@ -136,16 +136,21 @@ foreach ($line_items as $item) {
 		"<td>$" . $sub_total . "</td></tr>";
 }
 
+$style = "<style>" .
+"td, table { border-bottom:1px solid black; border-collapse:collapse }" .
+"th {background-color: #333; color: #FFF; border: 1px solid #333; padding:3px}" .
+"tr:nth-child(2n) { background-color: #CCC; color: #000 }" .
+"tr:nth-child(2n+1) { background-color: #FFF; color: #000 }" .
+"</style>";
 
-$html = "<body>" .
+$html = "<body>" . $style .
 	"<div><h1 style=\"text-align:center\">" .
 	"Invoice for " . $_POST['invoice_month'] .
 	"</h1><h4>Invoice number: $invoice_num</h4>" .
 	"<div id=\"contact_container\" " .
-	"style=\"width:80%;margin-left:10%;margin-right:10%\">" .
-	$customer_contact .	"<div style=\"float:left;width:50%\">&nbsp;</div>" .
-	$company_contact . "</div></div>" .
-	"<table style=\"margin-left:10%;margin-right:10%;width:80%;" .
+	"style=\"width:100%\">" .
+	$customer_contact .	$company_contact . "</div></div>" .
+	"<table style=\"width:100%;" .
 	"text-align:center;border:1px solid black\">$rows</table>" .
 	"<h4 style=\"margin-right:10%;text-align:right\">Total: $$total</h4>" .
 	"</body>";
@@ -177,7 +182,7 @@ if ($doc) {
 
 //if (isset($_GET['action']) && $_GET['action'] == 'create+pdf') {
 	include('../mpdf/mpdf.php');
-	$mpdf = new mPDF();
+	$mpdf = new mPDF('utf-8', 'letter');
 	$mpdf->WriteHTML($html);
 	$mpdf->Output($file, 'F');
 	//http_response_code(302);

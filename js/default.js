@@ -277,3 +277,37 @@ function generateInvoice() {
     xmlhttp.send(params);
 }
 
+function fillCustomerDetails(prefix) {
+	var customerSelector = document.getElementById(prefix + 'customer_selector');
+	var customerId = customerSelector.options[
+			customerSelector.selectedIndex
+		].value;
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			var reResponse = xmlhttp.responseText.split('<>');
+			document.getElementById(
+				prefix + 'customer_name'
+			).value = reResponse[0];
+			document.getElementById(
+				prefix + 'customer_prefix'
+			).value = reResponse[1];
+			document.getElementById(
+				prefix + 'customer_rate'
+			).value = reResponse[2];
+			document.getElementById(
+				prefix + 'customer_address'
+			).value = reResponse[3];
+			document.getElementById(
+				prefix + 'customer_email'
+			).value = reResponse[4];
+		}
+	}
+	xmlhttp.open(
+		"GET",
+		"ajax/get-customer-details.php?customer_id=" + customerId,
+		true
+	);
+	xmlhttp.send();
+}
+
