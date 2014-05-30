@@ -339,11 +339,11 @@ foreach ($emp_forms as $key => $value) {
     );
 }
 
-$buttons .= '<a href="login.php?logout=true"><button>Logout</button></a>';
-
-if ($_SESSION['user_priv'] == 'Administrator') { 
-    $buttons .= '<a href="admin.php"><button>Admin interface</button></a>';
-}
+$buttons .= '<div style="float:right">' .
+	(($_SESSION['user_priv'] == 'Administrator')?
+	'<a href="admin.php"><button>Admin interface</button></a>':'') .
+	'<a href="login.php?logout=true"><button>Logout</button></a>' . 
+	'</div>';
 
 //build page
 $head = get_default_head();

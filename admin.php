@@ -332,8 +332,10 @@ foreach ($admin_forms as $key => $value) {
     );
 }
 
-$buttons .= '<a href="login.php?logout=true"><button>Logout</button></a>' .
-        '<a href="emp.php"><button>Employee interface</button></a>';
+$buttons .= '<div style="float:right">' . 
+    '<a href="emp.php"><button>Employee interface</button></a>' . 
+	'<a href="login.php?logout=true"><button>Logout</button></a>' .
+	'</div>';
 
 $head = get_default_head();
 
