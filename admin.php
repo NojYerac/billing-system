@@ -320,7 +320,7 @@ $edit_customer_form = formify(
             'cols' => '40'
             )
         ), '<br/>',
-        inputify('text', 'edit_customor_phone', array(
+        inputify('text', 'edit_customer_phone', array(
             'label' => 'Phone: '
             )
         ), '<br/>',
