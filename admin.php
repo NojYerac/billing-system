@@ -250,6 +250,10 @@ $add_customer_form = formify(
             'cols' => '40'
             )
         ), '<br/>',
+        inputify('text', 'new_customer_phone', array(
+            'label' => 'Phone: '
+            )
+        ), '<br/>',
         inputify('text', 'new_customer_email', array(
             'label' => 'Email: '
             )
@@ -314,6 +318,10 @@ $edit_customer_form = formify(
             'innerHTML'=>'',
             'rows' => '5',
             'cols' => '40'
+            )
+        ), '<br/>',
+        inputify('text', 'edit_customor_phone', array(
+            'label' => 'Phone: '
             )
         ), '<br/>',
         inputify('text', 'edit_customer_email', array(
