@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_priv']) ||
 
 if (isset($_GET['customer_id'])) {
 	if ($_GET['customer_id'] == '') {
-		echo '<><><><>';
+		echo '<><><><><>';
 		exit();
 	}
 	$param = array('_id' => (new MongoId($_GET['customer_id'])));
@@ -28,6 +28,7 @@ echo htmlentities($doc['customer_name']) . '<>' .
 	htmlentities($doc['invoice_prefix']) . '<>' .
 	htmlentities($doc['customer_rate']) . '<>' .
 	htmlentities($doc['customer_address']) . '<>' .
+	htmlentities($doc['customer_phone']) . '<>' .
 	htmlentities($doc['customer_email']);
 
 ?>

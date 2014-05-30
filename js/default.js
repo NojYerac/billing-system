@@ -299,8 +299,11 @@ function fillCustomerDetails(prefix) {
 				prefix + 'customer_address'
 			).value = reResponse[3];
 			document.getElementById(
+				prefix + 'customer_phone'
+			).value = reResponse[4]
+			document.getElementById(
 				prefix + 'customer_email'
-			).value = reResponse[4];
+			).value = reResponse[5];
 		}
 	}
 	xmlhttp.open(
