@@ -128,4 +128,17 @@ function edit_customer($id, array $updates) {
     );
 }
 
+function edit_company($name, $address, $phone, $email, $website) {
+	return update_one_document('company_profile',
+		array(),	
+		array(
+			'company_name' => $name,
+			'company_address' => $address,
+			'company_phone' => $phone,
+			'company_email' => $email,
+			'company_website' => $website
+		)
+	);
+}
+
 ?>

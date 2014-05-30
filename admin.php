@@ -6,7 +6,9 @@ require_once('creds.php');
 require_once('csrf.php');
 
 session_start();
-//prevent csrf
+
+////////////////////////////////////////PREVENT CSRF///////////////////////////
+
 if (isset($_SESSION['csrf_token'])) {
     $old_csrf_token = $_SESSION['csrf_token'];
 }
@@ -18,7 +20,9 @@ $csrf_passed = (
     isset($_POST['csrf_token']) &&
     $old_csrf_token == $_POST['csrf_token']
 );
-//prevent unauthorized access
+
+////////////////////////////////////////PRVENT UNAUTHORIZED ACCESS/////////////
+
 if (!isset($_SESSION['user_priv']) || $_SESSION['user_priv'] != 'Administrator') {
 	http_response_code(302);
 	header('Location: ' . BASE_URL . 'login.php');
@@ -26,7 +30,8 @@ if (!isset($_SESSION['user_priv']) || $_SESSION['user_priv'] != 'Administrator')
     exit();
 }
 
-//handle database changes...
+////////////////////////////////////////HANDLE DATABASE CHANGES////////////////
+
 if (isset($_GET['action']) && $csrf_passed) {
     switch($_GET['action']) {
     case 'add user':
@@ -43,10 +48,11 @@ if (isset($_GET['action']) && $csrf_passed) {
         }
         break;
     case 'add customer':
-        if(add_customer(
+        if (add_customer(
             $_POST['new_customer_name'],
             $_POST['new_customer_rate'],
-            $_POST['new_customer_address'],
+			$_POST['new_customer_address'],
+			$_POST['new_customer_phone'],
 			$_POST['new_customer_email'],
 			$_POST['new_customer_prefix']
             )
@@ -57,12 +63,13 @@ if (isset($_GET['action']) && $csrf_passed) {
         }
 		break;
     case 'edit customer':
-		if(edit_customer(
+		if (edit_customer(
 			$_POST['customer_id'],
 			array(
 				'customer_name' => $_POST['edit_customer_name'],
 				'customer_rate' => $_POST['edit_customer_rate'],
 				'customer_address' => $_POST['edit_customer_address'],
+				'customer_phone' => $_POST['edit_customer_phone'],
 				'customer_email' => $_POST['edit_customer_email'],
 				'invoice_prefix' => $_POST['edit_customer_prefix']
 				)
@@ -73,11 +80,27 @@ if (isset($_GET['action']) && $csrf_passed) {
             $status =  "edit customer failed";
         }
 		break;
+	case 'edit company':
+		if (edit_company(
+			$_POST['company_name'],
+			$_POST['company_address'],
+			$_POST['company_phone'],
+			$_POST['company_email'],
+			$_POST['company_website']
+			)
+		) {
+            $status = "edit company profile successful";
+        } else {
+            $status =  "edit company profile failed";
+        }
+		break;
 	default:
         die("<br/>invalid action: csrf_passed=" . $csrf_passed);
     }
 }
-//build the forms...
+
+////////////////////////////////////////BUILD FORMS////////////////////////////
+
 $admin_forms = array();
 
 $csrf_input = inputify(
@@ -85,6 +108,76 @@ $csrf_input = inputify(
     'csrf_token',
     array('value' => $new_csrf_token)
 );
+
+////////////////////////////////////////EDIT COMPANY////////////////////////////
+
+$company_profile = get_one_document('company_profile', array());
+if (!$company_profile) {
+	$company_profile = array(
+		'company_name' => 'Name',
+		'company_address' => 'Address',
+		'company_phone' => 'Phone',
+		'company_email' => 'Email',
+		'company_website' => 'Website'
+	);
+	insert_one_document('company_profile', $company_profile);
+}
+
+$edit_company_inputs = 
+$edit_company_form = formify(
+	'POST' , BASE_URL . 'admin.php?action=edit+company',
+	array(
+		$csrf_input,
+		inputify('text', 'company_name', array(
+			'label' => 'Name: ',
+			'required' => 'required',
+			'value' => htmlentities($company_profile['company_name'])
+			)
+		) , '<br/>' ,
+		tagify(array(
+			'tag' => 'label',
+			'for' => 'company_address',
+			'innerHTML' => 'Address: '
+			)
+		),
+		tagify(array(
+			'tag' => 'textarea',
+			'id' => 'company_address',
+			'name' => 'company_address',
+			'innerHTML' => htmlentities($company_profile['company_address']),
+			'rows' => '5',
+			'cols' => '40'
+			)
+		), '<br/>',
+		inputify('text', 'company_phone', array(
+			'label' => 'Phone: ',
+			'required' => 'required',
+			'value' => htmlentities($company_profile['company_phone'])
+			)
+		) , '<br/>' ,
+		inputify('text', 'company_email', array(
+			'label' => 'Email: ',
+			'required' => 'required',
+			'value' => htmlentities($company_profile['company_email'])
+			)
+		) , '<br/>' ,
+		inputify('text', 'company_website', array(
+			'label' => 'Website: ',
+			'required' => 'required',
+			'value' => htmlentities($company_profile['company_website'])
+			)
+		) , '<br/>',
+		inputify('submit', 'submit', array('value' => 'Edit company profile'))
+	),
+	array('id' => 'edit_company_form')	
+);
+
+$admin_forms['edit_company'] = array(
+	'title' => 'Edit company profile',
+	'innerHTML' => $edit_company_form
+);
+
+////////////////////////////////////////NEW USER///////////////////////////////
 
 $add_user_form = formify(
     'POST', BASE_URL . '/admin.php?action=add+user',
@@ -113,6 +206,12 @@ $admin_forms['add_user'] = array(
     'title' => 'Add user',
     'innerHTML' => $add_user_form
 );
+
+//edit user
+////////////////////////////////////////EDIT USER//////////////////////////////
+//TODO
+
+////////////////////////////////////////ADD CUSTOMER///////////////////////////
 
 $add_customer_form = formify(
     'POST', BASE_URL . '/admin.php?action=add+customer',
@@ -326,7 +425,7 @@ foreach ($admin_forms as $key => $value) {
         array(
             'tag' => 'div',
             'id' => "${key}_div",
-            'innerHTML' => $value['innerHTML'],
+            'innerHTML' => "<h4>${value['title']}</h4>" . $value['innerHTML'],
             'class' => 'admin_forms_div hidden feature-box'
         )
     );

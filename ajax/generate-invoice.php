@@ -51,24 +51,21 @@ $customer_contact =
 	. $cust['customer_email'] .
 	"</p></div>";
 
-$comp = array(
-	'company_name' => "My example company, Inc.",
-	'company_address' => "123 Street Rd.\nSte. 456\nCityville, ST 78901",
-	'company_email' => "someone@somewhere.so",
-	'company_phone' => '(123) 456-7890'
-);
+$comp = get_one_document('company_profile', array());
+$name = htmlentities($comp['company_name']);
+$address = htmlentities($comp['company_address']);
+$phone = htmlentities($comp['company_phone']);
+$email = htmlentities($comp['company_email']);
+$website = htmlentities($comp['company_website']);
 
 $company_contact = 
 	"<div style=\"float:left;width:50%;text-align:right\" id=\"company_contact\">" .
-	"<p id=\"company_contact_name\">" .
-	htmlentities($comp['company_name']) .
-	"</p><p id=\"company_contact_address\">" .
-	str_replace("\n", "<br/>", htmlentities($comp['company_address'])) .
-	"</p><p id=\"company_contact_phone\">" .
-	htmlentities($comp['company_phone']) .
-	"</p><p id=\"company_contact_email\">" 
-	. $comp['company_email'] .
-	"</p></div>";
+	"<p id=\"company_contact_name\">$name</p>" .
+	"<p id=\"company_contact_address\">" . str_replace("\n", "<br/>", $address) . "</p>" .
+	"<p id=\"company_contact_phone\">$phone</p>" . 
+	"<a href=\"mailto:$email\" id=\"company_contact_email\">$email</a><br/>" .
+	"<a href=\"http://$website\" id=\"company_contact_website\">$website</a>" .
+	"</div>";
 
 $min_time = (new DateTime($_POST['invoice_month'] . ' UTC'));
 $max_time = (clone $min_time);
