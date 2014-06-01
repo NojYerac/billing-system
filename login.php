@@ -39,7 +39,17 @@ $login_message = 'Please enter your credentials.';
 if (isset($_GET['logout'])) {
 	session_startup();
     if (isset($_COOKIE[session_name()])) {
-        setcookie(session_name(), '', time()-3600, '/' );
+		$session_params = session_get_cookie_params();
+		setcookie(
+			session_name(),
+			'',
+			time()-3600,
+			$session_params['path'],
+			$session_params['domain'],
+			$session_params['secure'],
+			$session_params['httponly']
+		);
+        //setcookie(session_name(), '', time()-3600, '/' );
     }
     $_SESSION = array();
     session_destroy();
