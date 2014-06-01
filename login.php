@@ -53,34 +53,34 @@ if (isset($_POST['user_login']) && isset($_POST['user_pass'])) {
         } else {
             $lifetime = 0;
         }
-	$URL = parse_url(BASE_URL);
-	$path = $URL['path'];
-    $secure = ($URL['scheme'] == 'https');
-    $domain = $URL['host'] . (isset($URL['port'])?":".$URL['port']:'');
-    session_regenerate_id(true);
-    session_set_cookie_params($lifetime, $path, $domain, $secure, true);
-    $_SESSION['user_login'] = $_POST['user_login'];
-    $_SESSION['user_priv'] = $user_priv = get_priv($_POST['user_login']);
-	http_response_code(302);
-	switch ($user_priv) {
-	case 'Administrator':
-		$loc = 'admin.php';
-		break;
-	case 'Customer':
-		$loc = 'cust.php';
-		break;
-	case 'Employee':
-		$loc = 'emp.php';
-		break;
-	default:
-		$loc = '';
-		break;
-	}
-        $dest =  BASE_URL . $loc;
-        header('Location: ' . $dest);
-        echo "<a href=\"$dest\">Redirect</a>" .
-            "<script>window.location='$dest'</script>";
-        exit();
+		$URL = parse_url(BASE_URL);
+		$path = $URL['path'];
+		$secure = ($URL['scheme'] == 'https');
+		$domain = $URL['host']; //. (isset($URL['port'])?":".$URL['port']:'');
+		session_set_cookie_params($lifetime, $path, $domain, $secure, true);
+		session_regenerate_id(true);
+		$_SESSION['user_login'] = $_POST['user_login'];
+		$_SESSION['user_priv'] = $user_priv = get_priv($_POST['user_login']);
+		http_response_code(302);
+		switch ($user_priv) {
+		case 'Administrator':
+			$loc = 'admin.php';
+			break;
+		case 'Customer':
+			$loc = 'cust.php';
+			break;
+		case 'Employee':
+			$loc = 'emp.php';
+			break;
+		default:
+			$loc = '';
+			break;
+		}
+		$dest =  BASE_URL . $loc;
+		header('Location: ' . $dest);
+		echo "<a href=\"$dest\">Redirect</a>" .
+			"<script>window.location='$dest'</script>";
+		exit();
     } else {
         $login_message = 'Failed login atempt';
     }
