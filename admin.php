@@ -323,7 +323,7 @@ $edit_customer_form = formify(
             'required' => 'required'
             )
         ), '<br/>',
-		textareaify ('new_customer_address', array(
+		textareaify ('edit_customer_address', array(
 			'rows' => '5',
 			'cols' => '20',
 			'label' => 'Address: '
