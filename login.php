@@ -33,11 +33,11 @@ function get_login_form() {
     );
 }
 
-session_start();
 
 $login_message = 'Please enter your credentials.';
 
 if (isset($_GET['logout'])) {
+	session_start();
     if (isset($_COOKIE[session_name()])) {
         setcookie(session_name(), '', time()-3600, '/' );
     }
@@ -59,6 +59,7 @@ if (isset($_POST['user_login']) && isset($_POST['user_pass'])) {
 		$domain = $URL['host']; //. (isset($URL['port'])?":".$URL['port']:'');
 		session_set_cookie_params($lifetime, $path, $domain, $secure, true);
 		session_regenerate_id(true);
+		session_start();
 		$_SESSION['user_login'] = $_POST['user_login'];
 		$_SESSION['user_priv'] = $user_priv = get_priv($_POST['user_login']);
 		http_response_code(302);
