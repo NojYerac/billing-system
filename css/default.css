@@ -10,11 +10,13 @@ h1 {
     font-size: 4em;
     color: #aaa;
     text-align: center;
+	margin-top: 0.5em;
 }
 
 h2 {
     font-size: 3em;
     color: #777;
+	margin-top: 0.5em;
 }
 
 h4 {
