@@ -122,7 +122,7 @@ table.times tr:nth-child(2n) {
     color: #555;
     }
 
-table.times tr:nth-child(2n +1) {
+table.times tr:nth-child(2n+1) {
     background-color: #CCC;
     color: #222;
     }
@@ -132,6 +132,23 @@ table.times tr:nth-child(2n +1) {
     color: #333;
     font-size: 1em;
     text-align: center;
+}
+
+.status-box {
+    background-color: #EEE;
+    color: #333;
+    font-size: 1em;
+    text-align: center;
+}
+
+div.status-box {
+	position: absolute;
+	top: 30%;
+	left:20%;
+    margin: 80px;
+    padding: 30px;
+    border-radius: 10px;
+	border: 2px solid #333;
 }
 
 button.selected {

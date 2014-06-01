@@ -8,7 +8,7 @@ require_once('csrf.php');
 session_start();
 
 //prevent unauthorized access
-if (!isset($_SESSION['user_priv']) || 
+if (!isset($_SESSION['user_priv']) ||
     !in_array(
         $_SESSION['user_priv'],
         array('Administrator', 'Employee')
@@ -106,17 +106,17 @@ if (isset($_GET['action']) && $csrf_passed) {
 		$reqd_params = array(
 			'customer_id',
 			'project_name',
-			'project_notes',
 			'project_price'
 		);
-		check_reqd_post_params($reqd_params);
-		$project_id = create_project(
-            $_POST['customer_id'],
-			$_POST['project_name'],
-			$_POST['project_notes'],
-			$_POST['project_price']
-            );
-        if ($project_id) {
+		if (check_reqd_post_params($reqd_params)) {
+			$project_id = create_project(
+				$_POST['customer_id'],
+				$_POST['project_name'],
+				$_POST['project_notes'],
+				$_POST['project_price']
+			);
+		}
+        if (isset($project_id)) {
             $status = 'create new project sucessful';
         } else {
             $status = 'create new project failed';
@@ -342,7 +342,7 @@ foreach ($emp_forms as $key => $value) {
 $buttons .= '<div style="float:right">' .
 	(($_SESSION['user_priv'] == 'Administrator')?
 	'<a href="admin.php"><button>Admin interface</button></a>':'') .
-	'<a href="login.php?logout=true"><button>Logout</button></a>' . 
+	'<a href="login.php?logout=true"><button>Logout</button></a>' .
 	'</div>';
 
 //build page
@@ -364,9 +364,9 @@ $body = (
 
 if (isset($status)) {
     $body .= get_status_box($status);
-} else {
-	$body .= "<script>toggleSelected('timer_form')</script>";
 }
+
+$body .= "<script>toggleSelected('timer_form')</script>";
 
 echo get_document($head, $body, array());
 

@@ -123,7 +123,7 @@ if (!$company_profile) {
 	insert_one_document('company_profile', $company_profile);
 }
 
-$edit_company_inputs = 
+$edit_company_inputs =
 $edit_company_form = formify(
 	'POST' , BASE_URL . 'admin.php?action=edit+company',
 	array(
@@ -179,7 +179,7 @@ $edit_company_form = formify(
 		) , '<br/>',
 		inputify('submit', 'submit', array('value' => 'Edit company profile'))
 	),
-	array('id' => 'edit_company_form')	
+	array('id' => 'edit_company_form')
 );
 
 $admin_forms['edit_company'] = array(
@@ -204,7 +204,7 @@ $add_user_form = formify(
                 'Administrator' => 'Administrator',
                 'Employee' => 'Employee',
                 'Customer' => 'Customer'
-            ), 
+            ),
             array('label' => 'Privileges: ')
         ), '<br/>',
         inputify('submit', 'submit', array('value' => 'Create User'))
@@ -466,8 +466,8 @@ foreach ($admin_forms as $key => $value) {
     );
 }
 
-$buttons .= '<div style="float:right">' . 
-    '<a href="emp.php"><button class="header_button">Employee interface</button></a>' . 
+$buttons .= '<div style="float:right">' .
+    '<a href="emp.php"><button class="header_button">Employee interface</button></a>' .
 	'<a href="login.php?logout=true"><button class="header_button">Logout</button></a>' .
 	'</div>';
 
@@ -490,9 +490,9 @@ $body = (
 
 if (isset($status)) {
     $body .= get_status_box($status);
-} else {
-	$body .= "<script>toggleSelected('invoicing')</script>";
 }
+
+$body .= "<script>toggleSelected('invoicing')</script>";
 
 echo get_document($head, $body, array());
 

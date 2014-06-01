@@ -305,7 +305,7 @@ function get_status_box($status) {
     $status_box = tagify(array(
         'tag' => 'div',
         'id' => 'status_box',
-        'class' => 'feature-box visible',
+        'class' => 'status-box visible',
         'innerHTML' => $innerHTML
         )
     );
@@ -353,10 +353,9 @@ function get_time_rows_by_customer_and_datetime($customer_id, $min_time, $max_ti
             $project_names[$time['project_id']],
             date_create_from_format('U', $time['start_time']->sec),
             date_create_from_format('U', $time['stop_time']->sec)
-            ) . '<tr/>';
+            ) . '</tr>';
     }
     return $time_rows;
-    echo "<br/>" . htmlentities($time_rows);
 }
 
 function get_time_rows_by_project($project_id) {
@@ -364,10 +363,7 @@ function get_time_rows_by_project($project_id) {
     $project_name = $project['project_name'];
     $customer_id = $project['customer_id'];
     $customer_name = get_customer_name_by_id($customer_id);
-    $times = get_all_documents('timer', array(
-        'project_id' => $project_id
-        )
-    );
+    $times = get_all_documents('timer', array('project_id' => $project_id));
     $time_rows = '';
     foreach ($times as $time) {
         $time_rows .= get_time_row(
@@ -376,8 +372,8 @@ function get_time_rows_by_project($project_id) {
             $customer_name,
             $project_id,
             $project_name,
-            date_create_from_format( 'U', $time['start_time']->sec),
-            date_create_from_format( 'U', $time['stop_time']->sec)
+            date_create_from_format('U', $time['start_time']->sec),
+            date_create_from_format('U', $time['stop_time']->sec)
         );
     }
     return $time_rows;

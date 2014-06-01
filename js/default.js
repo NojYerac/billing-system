@@ -181,11 +181,11 @@ function editTime(time_id) {
     var projectSelector = document.getElementById('project_selector' + time_id);
     var customerID = customerSelector.options[customerSelector.selectedIndex].value;
     var projectID = projectSelector.options[projectSelector.selectedIndex].value;
-    var params = "csrf_token=" + encodeURIComponent(csrfToken) + "&action=edit" +
-        "&time_id=" + encodeURIComponent(time_id) +
-        "&customer_id=" + encodeURIComponent(customerID) +
-        "&project_id=" + encodeURIComponent(projectID) +
-        "&start_time=" + encodeURIComponent(startTime.getTime()/1000) +
+    var params = "csrf_token=" + encodeURIComponent(csrfToken) + "&action=edit"
+        "&time_id=" + encodeURIComponent(time_id)
+        "&customer_id=" + encodeURIComponent(customerID)
+        "&project_id=" + encodeURIComponent(projectID)
+        "&start_time=" + encodeURIComponent(startTime.getTime()/1000)
         "&stop_time=" + encodeURIComponent(stopTime.getTime()/1000);
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -207,8 +207,8 @@ function editTime(time_id) {
 function deleteTime(time_id) {
     var timeRow = document.getElementById('row_' + time_id);
     var csrfToken = document.getElementById('csrf_token').value;
-    var params = "csrf_token=" + encodeURIComponent(csrfToken) +
-        "&time_id=" + encodeURIComponent(time_id) +
+    var params = "csrf_token=" + encodeURIComponent(csrfToken)
+        "&time_id=" + encodeURIComponent(time_id)
         "&action=delete"
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -235,8 +235,8 @@ function filterRows() {
     var customerId = customerSelector.options[
             customerSelector.selectedIndex
         ].value;
-    var params = 'customer_id=' + encodeURIComponent(customerId) + '&' +
-        'min_time=' + encodeURIComponent(minTime.getTime()/1000) + '&' +
+    var params = 'customer_id=' + encodeURIComponent(customerId) + '&'
+        'min_time=' + encodeURIComponent(minTime.getTime()/1000) + '&'
         'max_time=' + encodeURIComponent(maxTime.getTime()/1000);
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
@@ -271,8 +271,8 @@ function generateInvoice() {
 			customerSelector.selectedIndex
 		].value;
 	var csrfToken = document.getElementById('csrf_token').value;
-	var params = 'customer_id=' + encodeURIComponent(customerId) + '&' +
-		'invoice_month=' + encodeURIComponent(invoiceMonth) + '&' +
+	var params = 'customer_id=' + encodeURIComponent(customerId) + '&'
+		'invoice_month=' + encodeURIComponent(invoiceMonth) + '&'
 		'csrf_token=' + encodeURIComponent(csrfToken);
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
