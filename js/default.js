@@ -235,8 +235,8 @@ function filterRows() {
     var customerId = customerSelector.options[
             customerSelector.selectedIndex
         ].value;
-    var params = 'customer_id=' + encodeURIComponent(customerId) + '&'
-        'min_time=' + encodeURIComponent(minTime.getTime()/1000) + '&'
+    var params = 'customer_id=' + encodeURIComponent(customerId) + '&' +
+        'min_time=' + encodeURIComponent(minTime.getTime()/1000) + '&' +
         'max_time=' + encodeURIComponent(maxTime.getTime()/1000);
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
