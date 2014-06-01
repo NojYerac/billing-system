@@ -490,8 +490,9 @@ $body = (
 
 if (isset($status)) {
     $body .= get_status_box($status);
+} else {
+	$body .= "<script>toggleSelected('invoicing')</script>";
 }
-
 
 echo get_document($head, $body, array());
 
