@@ -19,6 +19,7 @@ h2 {
 
 h4 {
     font-size: 2em;
+	margin-top: 0.5em;
 }
 
 p {
@@ -98,7 +99,10 @@ p.tooltip {
 }*/
 
 div.feature-box {
-    margin: 80px;
+    margin-left: 80px;
+	margin-right: 80px;
+	margin-top: 20px;
+	margin-bottom: 20px;
     padding: 30px;
     border-radius: 10px;
 }
