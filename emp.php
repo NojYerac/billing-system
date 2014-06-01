@@ -200,7 +200,7 @@ $emp_forms['new_project'] = array(
 				'step' => '0.01',
 				'reqired' => 'required'
 				)
-			),
+			), '<br/>',
             inputify('checkbox', 'start_timer', array(
                 'label' => 'Start timer: '
                 )
