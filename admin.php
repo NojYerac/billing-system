@@ -134,6 +134,15 @@ $edit_company_form = formify(
 			'value' => htmlentities($company_profile['company_name'])
 			)
 		) , '<br/>' ,
+		textareaify('company_address', array(
+			'innerHTML' => htmlentities($company_profile['company_address']),
+			'rows' => '4',
+			'cols' => '30',
+			'label' => 'Address: '
+			)
+		), '<br/>',
+/*
+		'<div class="input_container">',
 		tagify(array(
 			'tag' => 'label',
 			'for' => 'company_address',
@@ -148,7 +157,8 @@ $edit_company_form = formify(
 			'rows' => '5',
 			'cols' => '40'
 			)
-		), '<br/>',
+		),'</div>', '<br/>',
+ */
 		inputify('text', 'company_phone', array(
 			'label' => 'Phone: ',
 			'required' => 'required',
@@ -224,7 +234,7 @@ $add_customer_form = formify(
             )
 		), '<br/>',
 		inputify('text', 'new_customer_prefix', array(
-			'label' => 'Invoice number prefix: ',
+			'label' => 'Invoice prefix: ',
 			'required' => 'required',
 			'pattern' => '[A-Z0-9_-]+'
 			)
@@ -234,7 +244,14 @@ $add_customer_form = formify(
             'required' => 'required',
             'value' => '35'
             )
-        ), '<br/>',
+		), '<br/>',
+		textareaify ('new_customer_address', array(
+			'rows' => '5',
+			'cols' => '20',
+			'label' => 'Address: '
+			)
+		), '<br/>',
+/*
         tagify(array(
             'tag' => 'label',
             'for' => 'new_customer_address',
@@ -250,7 +267,8 @@ $add_customer_form = formify(
             'cols' => '40'
             )
         ), '<br/>',
-        inputify('text', 'new_customer_phone', array(
+ */
+		inputify('text', 'new_customer_phone', array(
             'label' => 'Phone: '
             )
         ), '<br/>',
@@ -295,7 +313,7 @@ $edit_customer_form = formify(
 			)
 		), '<br/>',
 		inputify('text', 'edit_customer_prefix', array(
-			'label' => 'Invoice number prefix: ',
+			'label' => 'Invoice prefix: ',
 			'required' => 'required',
 			'pattern' => '[A-Z0-9_-]+'
 			)
@@ -305,6 +323,13 @@ $edit_customer_form = formify(
             'required' => 'required'
             )
         ), '<br/>',
+		textareaify ('new_customer_address', array(
+			'rows' => '5',
+			'cols' => '20',
+			'label' => 'Address: '
+			)
+		), '<br/>',
+/*
         tagify(array(
             'tag' => 'label',
             'for' => 'edit_customer_address',
@@ -320,7 +345,8 @@ $edit_customer_form = formify(
             'cols' => '40'
             )
         ), '<br/>',
-        inputify('text', 'edit_customer_phone', array(
+ */
+		inputify('text', 'edit_customer_phone', array(
             'label' => 'Phone: '
             )
         ), '<br/>',
@@ -422,11 +448,12 @@ $admin_forms_divs = '';
 
 foreach ($admin_forms as $key => $value) {
     $buttons .= tagify(
-        array(
+		array(
             'tag' => 'button',
-            'onclick' => "toggleVisible('${key}_div')",
+            'onclick' => "toggleSelected('$key')",
             'innerHTML' => $value['title'],
-            'class' => 'header_button'
+			'class' => 'header_button deselected',
+			'id' => "${key}_button"
         )
     );
     $admin_forms_divs .= tagify(
@@ -440,27 +467,31 @@ foreach ($admin_forms as $key => $value) {
 }
 
 $buttons .= '<div style="float:right">' . 
-    '<a href="emp.php"><button>Employee interface</button></a>' . 
-	'<a href="login.php?logout=true"><button>Logout</button></a>' .
+    '<a href="emp.php"><button class="header_button">Employee interface</button></a>' . 
+	'<a href="login.php?logout=true"><button class="header_button">Logout</button></a>' .
 	'</div>';
 
 $head = get_default_head();
 
 $body = (
+	'<div class="header_placeholder">' .
+	'<div class="header">' .
+    '<h1>Admin Page</h1>' .
     tagify(
         array(
             'tag' => 'div',
             'id' => 'admin_header',
             'innerHTML' => $buttons
         )
-    ) .
-    '<h1>Admin Page</h1>' .
+	) .
+	'</div></div>' .
     $admin_forms_divs
 );
 
 if (isset($status)) {
     $body .= get_status_box($status);
 }
+
 
 echo get_document($head, $body, array());
 

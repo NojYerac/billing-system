@@ -320,13 +320,13 @@ $buttons = '';
 $emp_forms_divs = '';
 
 foreach ($emp_forms as $key => $value) {
-    $visibility = (($key == 'timer_form')?'visible':'hidden');
     $buttons .= tagify(
         array(
-            'tag' => 'button',
-            'onclick' => "toggleVisible('${key}_div')",
+			'tag' => 'button',
+			'id' => "${key}_button",
+            'onclick' => "toggleSelected('$key')",
             'innerHTML' => $value['title'],
-            'class' => 'header_button'
+            'class' => 'header_button deselected'
         )
     );
     $emp_forms_divs .= tagify(
@@ -334,7 +334,7 @@ foreach ($emp_forms as $key => $value) {
             'tag' => 'div',
             'id' => "${key}_div",
             'innerHTML' => $value['innerHTML'],
-            'class' => "emp_forms_div feature-box $visibility"
+            'class' => "emp_forms_div feature-box hidden"
         )
     );
 }
@@ -349,19 +349,23 @@ $buttons .= '<div style="float:right">' .
 $head = get_default_head();
 
 $body = (
+	'<div class="header_placeholder">' .
+	'<div class="header">' .
+    '<h1>Time tracking</h1>' .
     tagify(
         array(
             'tag' => 'div',
             'id' => 'emp_header',
             'innerHTML' => $buttons
         )
-    ) .
-    '<h1>Time tracking</h1>' .
+    ) . '</div></div>' .
     $emp_forms_divs
 );
 
 if (isset($status)) {
     $body .= get_status_box($status);
+} else {
+	$body .= "<script>toggleSelected('timer_form')</script>";
 }
 
 echo get_document($head, $body, array());

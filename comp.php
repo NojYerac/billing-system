@@ -61,6 +61,33 @@ function inputify($type, $id, $addnl_attrs) {
     return $label . tagify($tag_defs);
 }
 
+function textareaify($id, $addnl_attrs) {
+	$label = '';
+	if (!isset($addnl_attrs['innerHTML'])) {
+		$addnl_attrs['innerHTML'] = '';
+	}
+    $addnl_attrs = array_merge(array('name' => $id), $addnl_attrs);
+	//Create label tag if called for.'
+	if (isset($addnl_attrs['label'])) {
+		$label = tagify(
+			array(
+				'tag'    =>    'label',
+				'for'    =>    $id,
+				'innerHTML'=>    $addnl_attrs['label']
+			)
+		);
+		unset($addnl_attrs['label']);
+	}
+    //assemble array for tagification.
+    $tag_defs = array_merge(
+        array(
+        'tag'    =>    'textarea',
+        'id'    =>    $id),
+        $addnl_attrs
+    );
+    return '<div class="input_container">' . $label . tagify($tag_defs) . '</div>';
+}
+
 function optionify($id, $innerHTML, $value, $addnl_attrs) {
     /*create an option tag
      *

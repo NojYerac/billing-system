@@ -11,6 +11,28 @@ function toggleVisible(targetId) {
     target.setAttribute('class', targetClass);
 }
 
+function toggleSelectedButton(targetId) {
+    var target = document.getElementById(targetId);
+    var targetClass = target.getAttribute('class', 2);
+    if (/deselected/.test(targetClass)) {
+        targetClass = targetClass.replace(/deselected/, 'selected');
+    } else {
+        targetClass = targetClass.replace(/selected/, 'deselected');
+    }
+    target.setAttribute('class', targetClass);
+}
+
+function toggleSelected(id) {
+	var oldSelectedId = window.selectedId;
+	window.selectedId = id;
+	toggleVisible(id + '_div');
+	toggleSelectedButton(id + '_button');
+	if (oldSelectedId) {
+		toggleVisible(oldSelectedId + '_div');
+		toggleSelectedButton(oldSelectedId + '_button');
+	}
+}
+
 function getProjects(suffix) {
     if (suffix === undefined) {
         suffix = '';
@@ -277,6 +299,7 @@ function generateInvoice() {
     xmlhttp.send(params);
 }
 
+
 function fillCustomerDetails(prefix) {
 	var customerSelector = document.getElementById(prefix + 'customer_selector');
 	var customerId = customerSelector.options[
@@ -313,4 +336,3 @@ function fillCustomerDetails(prefix) {
 	);
 	xmlhttp.send();
 }
-
