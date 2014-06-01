@@ -300,8 +300,12 @@ function get_project_selector($required=false, $prefix='') {
 }
 
 function get_status_box($status) {
+	$script = "<script>statusBoxExpire = " .
+		"setInterval(function() {toggleVisible('status_box');" .
+	    "clearInterval(statusBoxExpire)}, 3000)</script>";
     $innerHTML = "<h2>Status</h2><hr/><p>$status</p>" .
-        '<button onclick="toggleVisible(\'status_box\')">Close</button>';
+		'<button onclick="toggleVisible(\'status_box\');' .
+		'clearInterval(statusBoxExpire)">Close</button>' . $script;
     $status_box = tagify(array(
         'tag' => 'div',
         'id' => 'status_box',

@@ -157,7 +157,16 @@ $timer_form_start = formify(
     array()
 );
 
-$timer_form_stop = formify(
+$running_timer = tagify(array(
+	'tag' => 'div',
+	'id' => 'running_timer_div',
+	'innerHTML' => '<script>runTimer()</script>' .
+		'<h4 id="running_timer_display">0:00:00</h4>'
+	)
+);
+
+$timer_form_stop = $running_timer .
+	formify(
     'POST',
     '?action=stop+timer',
     array(

@@ -271,8 +271,8 @@ function generateInvoice() {
 			customerSelector.selectedIndex
 		].value;
 	var csrfToken = document.getElementById('csrf_token').value;
-	var params = 'customer_id=' + encodeURIComponent(customerId) + '&'
-		'invoice_month=' + encodeURIComponent(invoiceMonth) + '&'
+	var params = 'customer_id=' + encodeURIComponent(customerId) + '&' +
+		'invoice_month=' + encodeURIComponent(invoiceMonth) + '&' +
 		'csrf_token=' + encodeURIComponent(csrfToken);
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
@@ -335,4 +335,15 @@ function fillCustomerDetails(prefix) {
 		true
 	);
 	xmlhttp.send();
+}
+
+function runTimer() {
+	window.secondsElapsed = 0;
+	window.intervalHandler = setInterval(function() {
+		window.secondsElapsed++;
+		var hours = ((window.secondsElapsed / (60 * 60))|0);
+		var mins = ('0' + ((((window.secondsElapsed / (60)) % 60)|0) % 60)).slice(-2);
+		var secs = ('0' + ((window.secondsElapsed % 60)|0)).slice(-2);
+		document.getElementById('running_timer_display').innerHTML = hours + ':' + mins + ':' + secs;
+	}, 1000);
 }
