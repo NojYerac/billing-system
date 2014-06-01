@@ -1,7 +1,8 @@
 <?php
 require_once('../config.php');
 require_once('../db.php');
-session_start();
+require_once('../creds.php');
+session_startup();
 
 if (!isset($_SESSION['user_priv']) ||
 	$_SESSION['user_priv'] !=  'Administrator') {

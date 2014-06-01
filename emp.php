@@ -5,7 +5,7 @@ require_once('comp.php');
 require_once('creds.php');
 require_once('csrf.php');
 
-session_start();
+session_startup();
 
 //prevent unauthorized access
 if (!isset($_SESSION['user_priv']) ||

@@ -2,7 +2,7 @@
 include('../config.php');
 include('../db.php');
 include('../comp.php');
-
+require_once('../creds.php');
 function edit_time($time_id) {
     $set = array();
     $param_names = array('customer_id', 'project_id', 'start_time', 'stop_time');
@@ -49,7 +49,7 @@ function edit_time($time_id) {
     return $status;
 }
 
-session_start();
+session_startup();
 
 if (!isset($_SESSION['user_login']) || !isset($_SESSION['user_priv']) ||
     !in_array($_SESSION['user_priv'], array('Administrator', 'Employee'))) {

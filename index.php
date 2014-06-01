@@ -1,11 +1,11 @@
 <?php
 require_once('config.php');
 //require_once('db.php');
-//require_once('creds.php');
+require_once('creds.php');
 //require_once('csrf.php');
 //require_once('comp.php');
 //Session
-session_start();
+session_startup();
 	http_response_code(302);
 if (isset($_SESSION['user_login'])) {
 	switch ($_SESSION['user_priv']) {

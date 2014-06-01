@@ -4,7 +4,7 @@ require_once('../db.php');
 require_once('../comp.php');
 require_once('../creds.php');
 
-session_start();
+session_startup();
 //var_dump($_POST);
 //prevent unauthorized access
 if (!isset($_SESSION['user_priv']) ||

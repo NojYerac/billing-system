@@ -2,8 +2,9 @@
 require_once('../config.php');
 require_once('../db.php');
 require_once('../comp.php');
+require_once('../creds.php');
 
-session_start();
+session_startup();
 
 //prevent unauthorized access
 if (!isset($_SESSION['user_priv']) || 

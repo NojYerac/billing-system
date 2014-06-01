@@ -141,4 +141,13 @@ function edit_company($name, $address, $phone, $email, $website) {
 	);
 }
 
+function session_startup() {
+		$URL = parse_url(BASE_URL);
+		$path = $URL['path'];
+		$secure = (($URL['scheme'] == 'https')?true:false);
+		$domain = $URL['host']; //. (isset($URL['port'])?":".$URL['port']:'');
+		session_set_cookie_params($lifetime, $path, $domain, $secure, true);
+		session_start();
+}
+
 ?>
