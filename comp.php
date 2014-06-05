@@ -419,4 +419,13 @@ function get_invoice_link($invoice) {
 	return tagify($tag_defs);
 }
 
+function get_invoice_row(array $row_params, $id='') {
+	$row = "<tr" . $id?" id=\"row_$id\"":"" . 
+		"><td>${item['project_name']}</td><td>${item['notes']}</td>" .
+		"<td>${item['quantity']} ${item['unit']}(s)</td>" .
+		"<td>$${item['price']}/${item['unit']}</td>" .
+		"<td>$" . $item['sub_total'] . "</td></tr>";
+	return $row;
+}
+
 ?>

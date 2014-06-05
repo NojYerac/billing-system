@@ -141,7 +141,7 @@ function edit_company($name, $address, $phone, $email, $website) {
 	);
 }
 
-function session_startup() {
+function session_startup($lifetime=0) {
 		$URL = parse_url(BASE_URL);
 		$path = $URL['path'];
 		$secure = (($URL['scheme'] == 'https')?true:false);

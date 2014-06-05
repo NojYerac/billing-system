@@ -16,6 +16,8 @@ define('TITLE',      'Billing system');
 
 define('BASE_DIR',   dirname(__FILE__));
 
+define('INVOICE_DIR', '/path/to/invoices/');
+
 define('BASE_URL',   'http://example.com/');
 
 ?>

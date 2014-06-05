@@ -64,7 +64,7 @@ if (isset($_POST['user_login']) && isset($_POST['user_pass'])) {
             $lifetime = 0;
         }
 		session_regenerate_id(true);
-		session_startup();
+		session_startup($lifetime);
 		$_SESSION['user_login'] = $_POST['user_login'];
 		$_SESSION['user_priv'] = $user_priv = get_priv($_POST['user_login']);
 		http_response_code(302);
