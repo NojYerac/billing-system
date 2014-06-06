@@ -41,7 +41,7 @@ $param = $_POST;
 if (!isset($param['project_name']) { $param['project_name'] = ''; }
 if (!isset($param['notes']) { $param['notes'] = ''; }
 
-$param['min_time'] = prepare_datetime((new DateTime($param['invoice_month'] . ' UTC'))->format('U');
+$param['min_time'] = prepare_datetime((new DateTime($param['invoice_month'] . ' UTC'))->format('U'));
 
 //TODO: logic and db interaction for custom invoice rows
 

@@ -4,7 +4,7 @@
 require_once('config.php');
 require_once('db.php');
 
-if (isset($_GET['token']) {
+if (isset($_GET['token'])) {
 	force_download_invoice();
 }
 
@@ -107,13 +107,14 @@ if (isset($_GET['action']) && $csrf_passed) {
 }
  */
 ////////////////////////////////////////BUILD FORMS////////////////////////////
-$invoice_rows = get_all_documents('invoices', array('paid' => 'unpaid'));
+$invoice_rows = get_all_documents('invoices', array('paid' => array( '$ne' => true)));
 
-$invoice_table_rows = tagify(
+$invoice_table_rows = tagify(array(
 	'tag' => 'tr',
 	'id' => 'invoice_table_header_row',
 	'innerHTML' => "<hr>Number</hr><hr>Customer</hr><hr>Start</hr>" .
 		"<hr>End</hr><hr>Total</hr><hr>Paid</hr>E<hr>D</hr>"
+	)
 );
 
 $customers = get_visible_clients();
@@ -122,12 +123,12 @@ foreach ($invoice_rows as $row) {
 	$format = 'Y-m-d H:i:s';
 	$start_time = date_create_from_format( 'U', $row['start_time']->sec);
 	$stop_time = date_create_from_format( 'U', $row['stop_time']->sec);
-	$invoice_table_rows .= tagify(
+	$invoice_table_rows .= tagify(array(
 		'tag' => 'tr',
-		'id' => "row_" . $tag['_id'],
-		'innerHTML' => "<td>${tag['invoice_number']}</td>" .
-			"<td id=\"${tag['customer_id']}\">" .
-			$customers[$tag['customer_id']] . "</td>" .
+		'id' => "row_" . $row['_id'],
+		'innerHTML' => "<td>${row['invoice_number']}</td>" .
+			"<td id=\"${row['customer_id']}\">" .
+			$customers[$row['customer_id']] . "</td>" .
 			"<td>" . $start_time->format($format) .	"</td>" .
 			"<td>" . $stop_time->format($format) . "</td>" .
 			"<tr>$${row['total']}</tr>" . 
@@ -137,17 +138,20 @@ foreach ($invoice_rows as $row) {
 				"onclick=\"editInvoice('${row['_id']}')>&nbsp;</tr>" .
 			'<tr class="invoice_tr_delete" ' .
 				"onclick=\"deleteInvoice('${row['_id']}')>&nbsp;</tr>"
+		)
 	);
 }
 
-$invoice_table = tagify(
+$invoice_table = tagify(array(
 	'tag' => 'table',
 	'id' => 'invoice_table',
 	'innerHTML' => $invoice_table_rows
+	)
 );
 
 
-/*
+echo $invoice_table;
+
 $admin_forms = array();
 
 $csrf_input = inputify(
@@ -155,7 +159,7 @@ $csrf_input = inputify(
     'csrf_token',
     array('value' => $new_csrf_token)
 );
-
+/*
 ////////////////////////////////////////EDIT COMPANY////////////////////////////
 
 $company_profile = get_one_document('company_profile', array());
@@ -205,7 +209,7 @@ $edit_company_form = formify(
 			'cols' => '40'
 			)
 		),'</div>', '<br/>',
- */
+ 
 		inputify('text', 'company_phone', array(
 			'label' => 'Phone: ',
 			'required' => 'required',
@@ -314,7 +318,7 @@ $add_customer_form = formify(
             'cols' => '40'
             )
         ), '<br/>',
- */
+/
 		inputify('text', 'new_customer_phone', array(
             'label' => 'Phone: '
             )
