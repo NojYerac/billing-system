@@ -112,7 +112,9 @@ $token = bin2hex(openssl_random_pseudo_bytes(32));
 $url = BASE_URL . '/invoice.php?token=' . $token;
 
 $params  = array(
-	'invoice_num' => htmlentities($invoice_num),
+	'customer_id' => $customer_id,
+	'month' => new MongoDate($min_time->format('U')),
+	'invoice_num' => $invoice_num,
 	'paid' => false,
 	'url' => $url,
 	'file' => $file,
@@ -176,7 +178,7 @@ $company_contact =
 	"</div>";
 
 //F = full month name
-$pretty_month = date_create_from_format('U', $start_time)->format('F, Y');
+$pretty_month = $min_time->format('F, Y');
 
 //build_html
 $html = "<body>" . $style .

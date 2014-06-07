@@ -6,6 +6,7 @@ require_once('db.php');
 
 if (isset($_GET['token'])) {
 	force_download_invoice();
+	exit();
 }
 
 require_once('comp.php');
@@ -106,23 +107,22 @@ if (isset($_GET['action']) && $csrf_passed) {
     }
 }
  */
+
+
 ////////////////////////////////////////BUILD FORMS////////////////////////////
 $invoice_rows = get_all_documents('invoices', array('paid' => array( '$ne' => true)));
 
 $invoice_table_rows = tagify(array(
 	'tag' => 'tr',
 	'id' => 'invoice_table_header_row',
-	'innerHTML' => "<hr>Number</hr><hr>Customer</hr><hr>Start</hr>" .
-		"<hr>End</hr><hr>Total</hr><hr>Paid</hr>E<hr>D</hr>"
+	'innerHTML' => "<th>Number</th><th>Customer</th><th>Month</th>" .
+		"<th>Total</th><th>Paid</th><th>E</th><th>D</th>"
 	)
 );
 
-$customers = get_visible_clients();
-
 foreach ($invoice_rows as $row) {
-	$format = 'Y-m-d H:i:s';
-	$start_time = date_create_from_format( 'U', $row['start_time']->sec);
-	$stop_time = date_create_from_format( 'U', $row['stop_time']->sec);
+	$format = 'Y-m';
+	$start_time = date_create_from_format( 'U', $row['month']->sec);
 	$invoice_table_rows .= tagify(array(
 		'tag' => 'tr',
 		'id' => "row_" . $row['_id'],
@@ -130,7 +130,6 @@ foreach ($invoice_rows as $row) {
 			"<td id=\"${row['customer_id']}\">" .
 			$customers[$row['customer_id']] . "</td>" .
 			"<td>" . $start_time->format($format) .	"</td>" .
-			"<td>" . $stop_time->format($format) . "</td>" .
 			"<tr>$${row['total']}</tr>" . 
 			"<tr class=\"invoice_tr_${row['paid']}\" " .
 				"onclick=\"togglePaid('${row['_id']}')\">&nbsp;</tr>" .

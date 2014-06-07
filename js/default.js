@@ -181,11 +181,11 @@ function editTime(time_id) {
     var projectSelector = document.getElementById('project_selector' + time_id);
     var customerID = customerSelector.options[customerSelector.selectedIndex].value;
     var projectID = projectSelector.options[projectSelector.selectedIndex].value;
-    var params = "csrf_token=" + encodeURIComponent(csrfToken) + "&action=edit"
-        "&time_id=" + encodeURIComponent(time_id)
-        "&customer_id=" + encodeURIComponent(customerID)
-        "&project_id=" + encodeURIComponent(projectID)
-        "&start_time=" + encodeURIComponent(startTime.getTime()/1000)
+    var params = "csrf_token=" + encodeURIComponent(csrfToken) + "&action=edit" +
+        "&time_id=" + encodeURIComponent(time_id) +
+        "&customer_id=" + encodeURIComponent(customerID) +
+        "&project_id=" + encodeURIComponent(projectID) +
+        "&start_time=" + encodeURIComponent(startTime.getTime()/1000) +
         "&stop_time=" + encodeURIComponent(stopTime.getTime()/1000);
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
