@@ -207,9 +207,9 @@ function editTime(time_id) {
 function deleteTime(time_id) {
     var timeRow = document.getElementById('row_' + time_id);
     var csrfToken = document.getElementById('csrf_token').value;
-    var params = "csrf_token=" + encodeURIComponent(csrfToken)
-        "&time_id=" + encodeURIComponent(time_id)
-        "&action=delete"
+    var params = "csrf_token=" + encodeURIComponent(csrfToken) +
+        "&time_id=" + encodeURIComponent(time_id) +
+        "&action=delete";
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
