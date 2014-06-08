@@ -245,7 +245,7 @@ function pprint($html) {
 
 }
 
-function get_customer_selector(array $addnl_attrs=array(), $prefix='') {
+function get_customer_selector(array $addnl_attrs=array(), $suffix='') {
     $customers = array_merge(
         array('Select a customer' => ''),
         get_visible_clients()
@@ -255,7 +255,7 @@ function get_customer_selector(array $addnl_attrs=array(), $prefix='') {
                 'label' => 'Customer: '
         ), $addnl_attrs
 	);
-	$id = $prefix . 'customer_selector';
+	$id = "customer_selector$suffix";
     return selectify($id, $customers, $addnl_attrs);
 }
 
@@ -265,9 +265,10 @@ function get_project_options($customer_id) {
         'Select a project',
         '', array('selected' => 'selected')
     );
-    $projects = get_all_documents(
+    $projects = get_sorted_documents(
         'projects',
-        array('customer_id' => $customer_id, 'active' => true)
+		array('customer_id' => $customer_id, 'active' => true),
+		array('_id' => -1)
     );
     foreach ($projects as $doc) {
         $project_id = htmlentities($doc['_id']);
@@ -280,15 +281,15 @@ function get_project_options($customer_id) {
     return $options;
 }
 
-function get_project_selector($required=false, $prefix='') {
-    $c_attr = array('onchange' => "getProjects()");
-    $p_attr = array( 'label' => 'Project: ');
+function get_project_selector($required=false, $suffix='', $p_attr=array()) {
+    $c_attr = array('onchange' => "getProjects('$suffix')");
+    $p_attr = array_merge($p_attr, array( 'label' => 'Project: '));
     if ($required) {
         $c_attr['required'] = 'required';
         $p_attr['required'] = 'required';
     }
-    $innerHTML = get_customer_selector($c_attr, $prefix) . '<br/>' .
-        selectify('project_selector', array('Select a project' => ''), $p_attr);
+    $innerHTML = get_customer_selector($c_attr, $suffix) . '<br/>' .
+        selectify("project_selector$suffix", array('Select a project' => ''), $p_attr);
     $selector = tagify(
         array(
             'tag' => 'div',

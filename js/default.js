@@ -57,10 +57,13 @@ function getProjects(suffix) {
     xmlhttp.send();
 }
 
-function getPrice() {
-	var customerSelector = document.getElementById('project_customer_selector');
+function getPrice(suffix) {
+    if (suffix === undefined) {
+        suffix = '';
+    }
+	var customerSelector = document.getElementById('customer_selector' + suffix);
 	var customerId = customerSelector.options[customerSelector.selectedIndex].value;
-	var priceInput = document.getElementById('project_price');
+	var priceInput = document.getElementById('price' + suffix);
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -71,6 +74,31 @@ function getPrice() {
 		"GET",
 		"ajax/get-price.php?customer_id=" + customerId,
 		true
+	);
+	xmlhttp.send();
+}
+
+function getProjectDetails(suffix) {
+    if (suffix === undefined) {
+        suffix = '';
+    }
+	projectName = document.getElementById('name' + suffix);
+	projectNotes = document.getElementById('notes' + suffix);
+	projectPrice = document.getElementById('price' + suffix);
+	projectId = document.getElementById('project_selector' + suffix).value;
+	xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var reResponse = xmlhttp.responseText.split('<>');
+			projectName.value = reResponse[0];
+			projectNotes.value = reResponse[1];
+			projectPrice.value = reResponse[2];
+		}
+	}
+	xmlhttp.open(
+			'GET',
+			'ajax/get-project-details.php?project_id=' + projectId,
+			true
 	);
 	xmlhttp.send();
 }
@@ -300,8 +328,8 @@ function generateInvoice() {
 }
 
 
-function fillCustomerDetails(prefix) {
-	var customerSelector = document.getElementById(prefix + 'customer_selector');
+function fillCustomerDetails(suffix) {
+	var customerSelector = document.getElementById('customer_selector' + suffix);
 	var customerId = customerSelector.options[
 			customerSelector.selectedIndex
 		].value;
@@ -310,22 +338,22 @@ function fillCustomerDetails(prefix) {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 			var reResponse = xmlhttp.responseText.split('<>');
 			document.getElementById(
-				prefix + 'customer_name'
+				'customer_name' + suffix
 			).value = reResponse[0];
 			document.getElementById(
-				prefix + 'customer_prefix'
+				'customer_prefix' + suffix
 			).value = reResponse[1];
 			document.getElementById(
-				prefix + 'customer_rate'
+				'customer_rate' + suffix
 			).value = reResponse[2];
 			document.getElementById(
-				prefix + 'customer_address'
+				'customer_address' + suffix
 			).value = reResponse[3];
 			document.getElementById(
-				prefix + 'customer_phone'
+				'customer_phone' + suffix
 			).value = reResponse[4];
 			document.getElementById(
-				prefix + 'customer_email'
+				'customer_email' + suffix
 			).value = reResponse[5];
 		}
 	}

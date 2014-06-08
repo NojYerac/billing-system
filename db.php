@@ -33,6 +33,20 @@ function get_all_documents($collection, array $params) {
     return $docs;
 }
 
+function get_sorted_documents($collection, array $params, array $sort) {
+    $client = new MongoClient(DB_HOST);
+    $db_server = $client->selectDB(DB_NAME);
+    $db_server->authenticate(DB_USER, DB_PASS);
+    $curs = $db_server->selectCollection($collection)->find($params);
+	$curs->sort($sort);
+    $docs = array();
+    foreach ($curs as $doc) {
+        $docs[]=$doc;
+    }
+    $client->close();
+    return $docs;
+}
+
 function update_one_value( $collection, array $params, $field, $value) {
     $client = new MongoClient(DB_HOST);
     $db_server = $client->selectDB(DB_NAME);

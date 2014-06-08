@@ -71,6 +71,19 @@ function create_project($id, $name, $notes, $price) {
     );
 }
 
+function edit_project($id, $name, $notes, $price) {
+	return update_one_document(
+		'projects',
+		array('_id' => (new MongoId($id))),
+        array(
+			'project_name' => $name,
+			'project_notes' => $notes,
+			'project_price' => $price,
+			'active' => true
+        )
+    );
+}		
+
 function check_reqd_post_params($reqd_params) {
 	foreach ($reqd_params as $param) {
 		if (!isset($_POST[$param]) || $_POST[$param] == '') {
@@ -131,6 +144,27 @@ if (isset($_GET['action']) && $csrf_passed) {
             }
         }
         break;
+	case 'edit project':
+		$reqd_params = array(
+			'project_selector_edit_project',
+			'name_edit_project',
+			'notes_edit_project',
+			'price_edit_project'
+		);
+		if (check_reqd_post_params($reqd_params)) {
+			$project_id = edit_project(
+				$_POST['project_selector_edit_project'],
+				$_POST['name_edit_project'],
+				$_POST['notes_edit_project'],
+				$_POST['price_edit_project']
+			);
+		}
+		if ($project_id) {
+			$status = 'edit project successful';
+		} else {
+			$status = 'edit project failed';
+		}
+		break;
     default:
         die("<br/>invalid action: csrf_passed=" . $csrf_passed);
     }
@@ -194,17 +228,22 @@ $emp_forms['new_project'] = array(
         '?action=new+project',
         array(
             $csrf_input,
-            get_customer_selector(array('required' => 'required', 'name' => 'customer_id', 'onchange' => 'getPrice()'), 'project_'), '<br/>',
-            inputify('text', 'project_name', array(
+			get_customer_selector(
+				array(
+					'required' => 'required',
+					'name' => 'customer_id',
+					'onchange' => "getPrice('_new_project')"
+				), '_new_project'), '<br/>',
+            inputify('text', 'name_new_project', array(
                 'required' => 'required',
-		'label' => 'Project name: ',
+				'label' => 'Project name: ',
                 )
 			), '<br/>',
-			inputify('textarea', 'project_notes', array(
+			inputify('textarea', 'notes_new_project', array(
 				'label' => 'Project notes: '
 				)
 			), '<br/>',
-			inputify('number', 'project_price', array(
+			inputify('number', 'price_new_project', array(
 				'label' => 'Price: ',
 				'step' => '0.01',
 				'reqired' => 'required'
@@ -222,6 +261,42 @@ $emp_forms['new_project'] = array(
         array()
     )
 );
+
+//define edit project form
+$emp_forms['edit_project'] = array(
+    'title' => 'Edit project',
+    'innerHTML' => formify(
+        'POST',
+        '?action=edit+project',
+        array(
+            $csrf_input,
+			get_project_selector(true, '_edit_project', array(
+				'onchange' => "getProjectDetails('_edit_project')")
+			), '<br/>',
+			inputify('textarea', 'name_edit_project', array(
+				'label' => 'Project name: ',
+				'required' => 'required'
+				)
+			), '<br/>',
+			inputify('textarea', 'notes_edit_project', array(
+				'label' => 'Project notes: '
+				)
+			), '<br/>',
+			inputify('number', 'price_edit_project', array(
+				'label' => 'Price: ',
+				'step' => '0.01',
+				'reqired' => 'required'
+				)
+			), '<br/>',
+            inputify('submit', 'edit_project', array(
+		'value' => 'Edit project'
+                )
+            )
+        ),
+        array()
+    )
+);
+
 
 //define show_tables
 $format = 'Y-m-d\TH:i:s';

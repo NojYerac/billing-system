@@ -66,12 +66,12 @@ if (isset($_GET['action']) && $csrf_passed) {
 		if (edit_customer(
 			$_POST['customer_id'],
 			array(
-				'customer_name' => $_POST['edit_customer_name'],
-				'customer_rate' => $_POST['edit_customer_rate'],
-				'customer_address' => $_POST['edit_customer_address'],
-				'customer_phone' => $_POST['edit_customer_phone'],
-				'customer_email' => $_POST['edit_customer_email'],
-				'invoice_prefix' => $_POST['edit_customer_prefix']
+				'customer_name' => $_POST['customer_name_edit'],
+				'customer_rate' => $_POST['customer_rate_edit'],
+				'customer_address' => $_POST['customer_address_edit'],
+				'customer_phone' => $_POST['customer_phone_edit'],
+				'customer_email' => $_POST['customer_email_edit'],
+				'invoice_prefix' => $_POST['customer_prefix_edit']
 				)
             )
         ) {
@@ -303,27 +303,27 @@ $edit_customer_form = formify(
 			array(
 				'required' => 'required',
 				'name' => 'customer_id',
-				'onchange' => 'fillCustomerDetails(\'edit_\')'
-			), 'edit_'
+				'onchange' => 'fillCustomerDetails(\'_edit\')'
+			), '_edit'
 		),
 		'<br/>',
-		inputify('text', 'edit_customer_name', array(
+		inputify('text', 'customer_name_edit', array(
 			'label' => 'Name: ',
 			'required' => 'required'
 			)
 		), '<br/>',
-		inputify('text', 'edit_customer_prefix', array(
+		inputify('text', 'customer_prefix_edit', array(
 			'label' => 'Invoice prefix: ',
 			'required' => 'required',
 			'pattern' => '[A-Z0-9_-]+'
 			)
 		), '<br/>',
-        inputify('number', 'edit_customer_rate', array(
+        inputify('number', 'customer_rate_edit', array(
             'label' => 'Default rate: ',
             'required' => 'required'
             )
         ), '<br/>',
-		textareaify ('edit_customer_address', array(
+		textareaify ('customer_address_edit', array(
 			'rows' => '5',
 			'cols' => '20',
 			'label' => 'Address: '
@@ -346,11 +346,11 @@ $edit_customer_form = formify(
             )
         ), '<br/>',
  */
-		inputify('text', 'edit_customer_phone', array(
+		inputify('text', 'customer_phone_edit', array(
             'label' => 'Phone: '
             )
         ), '<br/>',
-        inputify('text', 'edit_customer_email', array(
+        inputify('text', 'customer_email_edit', array(
             'label' => 'Email: '
             )
         ), '<br/>',
