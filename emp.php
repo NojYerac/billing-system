@@ -118,16 +118,18 @@ if (isset($_GET['action']) && $csrf_passed) {
     case 'new project':
 		$reqd_params = array(
 			'customer_id',
-			'project_name',
-			'project_price'
+			'name_new_project',
+			'price_new_project'
 		);
 		if (check_reqd_post_params($reqd_params)) {
 			$project_id = create_project(
 				$_POST['customer_id'],
-				$_POST['project_name'],
-				$_POST['project_notes'],
-				$_POST['project_price']
+				$_POST['name_new_project'],
+				$_POST['notes_new_project']?$_POST['notes_new_project']:'',
+				$_POST['price_new_project']
 			);
+		} else {
+			die('Mising parameters');
 		}
         if (isset($project_id)) {
             $status = 'create new project sucessful';
@@ -329,7 +331,7 @@ $max_datetime_input = inputify(
 
 //$project_selector = get_project_selector();
 
-$customer_selector = get_customer_selector(array(), 'filter_');
+$customer_selector = get_customer_selector(array(), '_filter');
 
 $filter_submit = inputify(
 	'submit',

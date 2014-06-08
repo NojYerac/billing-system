@@ -259,7 +259,7 @@ function filterRows() {
     var timeTable = document.getElementById('time_table').firstChild;
     var minTime = new Date(document.getElementById('filter_min_time').value);
     var maxTime = new Date(document.getElementById('filter_max_time').value);
-    var customerSelector = document.getElementById('filter_customer_selector');
+    var customerSelector = document.getElementById('customer_selector_filter');
     var customerId = customerSelector.options[
             customerSelector.selectedIndex
         ].value;
