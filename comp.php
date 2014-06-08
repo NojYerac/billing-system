@@ -407,24 +407,31 @@ function get_time_row(
         " onclick=\"if (confirm('Delete row?')) {deleteTime('$time_id')}\"/>";
 }
 
+
 function get_invoice_link($invoice) {
-	$tag_defs = array(
-		'tag' => 'a',
-		'target' => '_blank',
-		'class' => 'invoice_link_' . ($invoice['paid']?'paid':'unpaid'),
-		'href' => $invoice['url'],
-		'innerHTML' => $invoice['invoice_num'] .'&nbsp;$'. $invoice['total'],
-		'id' => 'invoice_link_' . (string)$invoice['_id'],
+	return tagify(array(
+		'tag' => 'li',
+		'id' => "invoice_li_${invoice['_id']}",
+		'class' => 'invoice_li ' . ($invoice['paid']?'paid':'unpaid') ,
+		'innerHTML' => tagify(array(
+			'tag' => 'a',
+			//'target' => '_blank',
+			'class' => 'invoice_link ' . ($invoice['paid']?'paid':'unpaid'),
+			'href' => $invoice['url'],
+			'innerHTML' => "${invoice['invoice_number']}.pdf",
+			'id' => "invoice_link_${invoice['_id']}",
+			)
+		) . ' $' . $invoice['total']
+		)
 	);
-	return tagify($tag_defs);
 }
 
 function get_invoice_row(array $row_params, $id='') {
-	$row = "<tr" . $id?" id=\"row_$id\"":"" . 
-		"><td>${item['project_name']}</td><td>${item['notes']}</td>" .
-		"<td>${item['quantity']} ${item['unit']}(s)</td>" .
-		"<td>$${item['price']}/${item['unit']}</td>" .
-		"<td>$" . $item['sub_total'] . "</td></tr>";
+	$row = "<tr" . ($id?" id=\"row_$id\"":"") . 
+		"><td>${row_params['project_name']}</td><td>${row_params['notes']}</td>" .
+		"<td>${row_params['quantity']} ${row_params['unit']}(s)</td>" .
+		"<td>$${row_params['price']}/${row_params['unit']}</td>" .
+		"<td>$" . $row_params['sub_total'] . "</td></tr>";
 	return $row;
 }
 

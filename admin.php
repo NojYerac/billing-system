@@ -375,11 +375,12 @@ $admin_forms['edit_customer'] = array(
 ////define invoice list.
 
 function get_invoice_links() {
-	$invoice_links = '';
+	$invoice_links = '<ul id="invoice_list_ul">';
 	$invoices = get_all_documents('invoices', array());
 	foreach ($invoices as $invoice) {
-		$invoice_links .= get_invoice_link($invoice) . '<br/>';
+		$invoice_links .= get_invoice_link($invoice);
 	}
+	$invoice_links .= '</ul>';
 	return $invoice_links;
 }
 

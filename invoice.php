@@ -4,11 +4,24 @@
 require_once('config.php');
 require_once('db.php');
 
+////////////////////////////////////////DOWNLOAD INVOICE///////////////////////
 if (isset($_GET['token'])) {
-	force_download_invoice();
-	exit();
+	$doc = get_one_document('invoices', array('token' => $_GET['token']));
+	if ($doc) {
+		$filename = basename($doc['file']);
+		if (isset($_GET['action']) && $_GET['action'] == 'download') {
+			header("Content-disposition: attachment; filename=\"$filename\"");
+		}
+		header("Content-type: application/pdf");
+		echo readfile($doc['file']);
+		exit();
+	} else {
+		http_response_code(302);
+		header('Location: ' . BASE_URL);
+	}
 }
 
+///////////////////////////////////////////////////////////////////////////////
 require_once('comp.php');
 require_once('creds.php');
 require_once('csrf.php');
@@ -120,23 +133,33 @@ $invoice_table_rows = tagify(array(
 	)
 );
 
+$customers = get_visible_clients();
+
+
+$customers_reverse_lookup = array();
+foreach ($customers as $name => $id) {
+	$customers_reverse_lookup[(string)$id] = $name;
+}
+
+$format = 'Y-m';
+
 foreach ($invoice_rows as $row) {
-	$format = 'Y-m';
+	$paid = $row['paid']?'paid':'unpaid';
 	$start_time = date_create_from_format( 'U', $row['month']->sec);
 	$invoice_table_rows .= tagify(array(
 		'tag' => 'tr',
 		'id' => "row_" . $row['_id'],
 		'innerHTML' => "<td>${row['invoice_number']}</td>" .
 			"<td id=\"${row['customer_id']}\">" .
-			$customers[$row['customer_id']] . "</td>" .
+			$customers_reverse_lookup[$row['customer_id']] . "</td>" .
 			"<td>" . $start_time->format($format) .	"</td>" .
-			"<tr>$${row['total']}</tr>" . 
-			"<tr class=\"invoice_tr_${row['paid']}\" " .
-				"onclick=\"togglePaid('${row['_id']}')\">&nbsp;</tr>" .
-			'<tr class="invoice_tr_edit" ' .
-				"onclick=\"editInvoice('${row['_id']}')>&nbsp;</tr>" .
-			'<tr class="invoice_tr_delete" ' .
-				"onclick=\"deleteInvoice('${row['_id']}')>&nbsp;</tr>"
+			"<td>$${row['total']}</td>" . 
+			"<td class=\"invoice_td_$paid\" " .
+				"onclick=\"togglePaid('${row['_id']}')\">&nbsp;</td>" .
+			'<td class="invoice_td_edit" ' .
+				"onclick=\"editInvoice('${row['_id']}')\">&nbsp;</td>" .
+			'<td class="invoice_td_delete" ' .
+				"onclick=\"deleteInvoice('${row['_id']}')\">&nbsp;</td>"
 		)
 	);
 }

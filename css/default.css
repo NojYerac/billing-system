@@ -163,6 +163,10 @@ button.selected {
 	border: 2px solid #FFF;
 }
 
+.invoice_li {
+	list-style-type: none;
+}
+
 .header {
 	background-color: #333;
 	position: absolute;

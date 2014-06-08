@@ -33,6 +33,7 @@ $min_time = (new DateTime($_POST['invoice_month'] . ' UTC'));
 $max_time = (clone $min_time);
 $max_time->modify('last day of this month');
 $max_time->setTime(23,59,59);
+$customer_id = $_POST['customer_id'];
 
 function new_line_item($project_id) {
 	$project = get_one_document(
@@ -58,14 +59,13 @@ function get_invoice_rows($customer_id, $min_time, $max_time) {
 	$billable_times = get_all_documents(
 		'timer',
 		array(
-			'customer_id'=>$_POST['customer_id'],
+			'customer_id'=> $customer_id,
 			'start_time' => array(
-				'$gte' => $min_time,
-				'$lte' => $max_time
+				'$gte' => prepare_datetime($min_time),
+				'$lte' => prepare_datetime($max_time)
 			)
 		)
 	);
-
 	$line_items = array();
 
 	foreach ($billable_times as $time) {
@@ -75,14 +75,15 @@ function get_invoice_rows($customer_id, $min_time, $max_time) {
 		}
 		$line_items[$time['project_id']]['quantity'] += $interval;
 	}
-
+	
 	$total = 0;
+	$rows = '';
 
 	foreach ($line_items as $project_id => $item) {
 		$item['quantity'] = seconds_to_hours_rounded((float)$item['quantity']);
 		$item['sub_total'] =  (float)$item['price'] * (float)$item['quantity'];
 		$total += $item['sub_total'];
-		$rows .= get_invoice_row(array($item, 'proj_' . $project_id));
+		$rows .= get_invoice_row($item, 'proj_' . $project_id);
 	}
 
 	//allow for custom line items.
@@ -99,13 +100,19 @@ function get_invoice_rows($customer_id, $min_time, $max_time) {
 	return array('rows' => $rows, 'total' => $total);
 }
 
-$invoice_rows = get_invoice_rows($_POST['customer_id'], $min_time, $max_time);
+$invoice_rows = get_invoice_rows($customer_id, $min_time, $max_time);
 
+$total = $invoice_rows['total'];
 $rows = "<tr><th>Project</th><th>Note</th><th>Quantity</th><th>Price</th><th>Total</th></tr>" .
 	$invoice_rows['rows'];
 
+$cust = get_one_document('clients', array('_id' => (new MongoId($_POST['customer_id']))));
+
+$invoice_number	= $cust['invoice_prefix'] . '_' . $_POST['invoice_month'];
+
+
 //actual file path
-$file = INVOICE_DIR . $invoice_num . '.pdf';
+$file = INVOICE_DIR . $invoice_number . '.pdf';
 
 //create magic token... we'll use this to give secure links to customers without logins.
 $token = bin2hex(openssl_random_pseudo_bytes(32));
@@ -114,11 +121,11 @@ $url = BASE_URL . '/invoice.php?token=' . $token;
 $params  = array(
 	'customer_id' => $customer_id,
 	'month' => new MongoDate($min_time->format('U')),
-	'invoice_num' => $invoice_num,
+	'invoice_number' => $invoice_number,
 	'paid' => false,
 	'url' => $url,
 	'file' => $file,
-	'total' => $invoice_rows['total'],
+	'total' => $total,
 	'token' => $token
 );
 
@@ -145,10 +152,6 @@ $style = "<style>" .
 "</style>";
 
 //get contact blocks
-$cust = get_one_document('clients', array('_id' => (new MongoId($_POST['customer_id']))));
-
-$invoice_num = $cust['invoice_prefix'] . '_' . $_POST['invoice_month'];
-
 $customer_contact = 
 	"<div style=\"float:left;width:50%\" id=\"customer_contact\">" .
 	"<p id=\"customer_contact_name\">" .
@@ -184,7 +187,7 @@ $pretty_month = $min_time->format('F, Y');
 $html = "<body>" . $style .
 	"<div><h1 style=\"text-align:center\">" .
 	"Invoice for " . $pretty_month .
-	"</h1><h4>Invoice number: " . htmlentities($invoice_num) . "</h4>" .
+	"</h1><h4>Invoice number: " . htmlentities($invoice_number) . "</h4>" .
 	"<div id=\"contact_container\" " .
 	"style=\"width:100%\">" .
 	$customer_contact .	$company_contact . "</div></div>" .

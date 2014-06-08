@@ -262,7 +262,7 @@ function filterRows() {
 }
 
 function generateInvoice() {
-	var invoiceListDiv = document.getElementById('invoice_list_div');
+	var invoiceListUl = document.getElementById('invoice_list_ul');
 	var customerSelector = document.getElementById(
 			'invoicing_customer_selector'
 			);
@@ -277,15 +277,15 @@ function generateInvoice() {
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-			var newInvoiceLinkId = /id="([^"]+)/.exec(xmlhttp.responseText)[1];
+			var newInvoiceLinkId = /id="(invoice_li_[^"]+)/.exec(xmlhttp.responseText)[1];
 			console.log(newInvoiceLinkId);
 			var oldInvoiceLink = document.getElementById(newInvoiceLinkId);
 			if (oldInvoiceLink) {
-				console.log(oldInvoiceLink);
-				invoiceListDiv.removeChild(oldInvoiceLink.nextSibling);
-				invoiceListDiv.removeChild(oldInvoiceLink);
+				//invoiceListDiv.removeChild(oldInvoiceLink.nextSibling);
+				//invoiceListDiv.removeChild(oldInvoiceLink.nextSibling);
+				invoiceListUl.removeChild(oldInvoiceLink);
 			}
-			invoiceListDiv.innerHTML += xmlhttp.responseText + '<br/>';
+			invoiceListUl.innerHTML += xmlhttp.responseText;
 		}
 	}
 	xmlhttp.open(
