@@ -37,7 +37,7 @@ if (!isset($_POST['csrf_token']) ||
     exit();
 }
 
-if (!isset($_POST['invoice_id']) || !isset($_POST['action'])) {
+if (!isset($_POST['invoice_id']) || !isset($_GET['action'])) {
     http_response_code(500);
     echo "Missing required params";
     exit();

@@ -345,20 +345,23 @@ function editInvoice(invoiceId) {
 			'ajax/edit-invoice.php?action=edit',
 			true
 	);
+	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("Content-length", params.length);
 	xmlhttp.send(params);
 	editInvoiceDiv.innerHTML += '<button>Save</button>';
 }
 
 function deleteInvoice(invoiceId) {
     var csrfToken = document.getElementById('csrf_token').value;
-	var params = 'csrf_token=' + csrfToken + '&invoice_id=' + invoiceId;
+	var params = 'csrf_token=' + encodeURIComponent(csrfToken) +
+        '&invoice_id=' + encodeURIComponent(invoiceId);
 	var invoiceLi = document.getElementById('invoice_li_' + invoiceId);
 	var editInvoiceDiv = document.getElementById('edit_invoice_div_' + invoiceId);
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			editInvoiceDiv.parent.removeChild(editInvoiceDiv);
-			invoiceLi.parent.removeChild(invoiceLi);
+			editInvoiceDiv.parentNode.removeChild(editInvoiceDiv);
+			invoiceLi.parentNode.removeChild(invoiceLi);
 		}
 	}
 	xmlhttp.open(
@@ -366,6 +369,8 @@ function deleteInvoice(invoiceId) {
 			'ajax/edit-invoice.php?action=delete',
 			true
 	);
+	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("Content-length", params.length);
 	xmlhttp.send(params);
 
 }
