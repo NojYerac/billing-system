@@ -419,11 +419,10 @@ function get_edit_invoice_div($invoice) {
 				'tag' => 'div',
 				'id' => "edit_invoice_buttons_div_${invoice['_id']}",
 				'innerHTML' => "<button onclick=" .
-				"\"toggleVisible('edit_invoice_div_${invoice['_id']}');" .
-				"editInvoice('${invoice['_id']}')\">Edit</button>" .
+				"\"editInvoice('${invoice['_id']}')\">Edit</button>" .
 				"<button onclick=\"if (confirm('Delete invoice ${invoice['invoice_number']}'))" .
 				"{ toggleVisible('edit_invoice_div_${invoice['_id']}');" .
-				"deletInvoice('${invoice['_id']}')}\">Delete</button>" .
+				"deleteInvoice('${invoice['_id']}')}\">Delete</button>" .
 				"<button onclick=\"toggleVisible('edit_invoice_div_${invoice['_id']}')\">" .
 				"Cancel</button>"
 				)
