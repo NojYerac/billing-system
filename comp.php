@@ -409,10 +409,34 @@ function get_time_row(
 }
 
 
+function get_edit_invoice_div($invoice) {
+	return tagify(array(
+		'tag' => 'div',
+		'id' => "edit_invoice_div_${invoice['_id']}",
+		'class' => 'edit_invoice_div hidden',
+		'innerHTML' => "<h4>${invoice['invoice_number']}</h4>" .
+			tagify(array(
+				'tag' => 'div',
+				'id' => "edit_invoice_buttons_div_${invoice['_id']}",
+				'innerHTML' => "<button onclick=" .
+				"\"toggleVisible('edit_invoice_div_${invoice['_id']}');" .
+				"editInvoice('${invoice['_id']}')\">Edit</button>" .
+				"<button onclick=\"if (confirm('Delete invoice ${invoice['invoice_number']}'))" .
+				"{ toggleVisible('edit_invoice_div_${invoice['_id']}');" .
+				"deletInvoice('${invoice['_id']}')}\">Delete</button>" .
+				"<button onclick=\"toggleVisible('edit_invoice_div_${invoice['_id']}')\">" .
+				"Cancel</button>"
+				)
+			)
+		)
+	);
+}
+
 function get_invoice_link($invoice) {
 	return tagify(array(
 		'tag' => 'li',
 		'id' => "invoice_li_${invoice['_id']}",
+		'onclick' => "toggleVisible('edit_invoice_div_${invoice['_id']}')",
 		'class' => 'invoice_li ' . ($invoice['paid']?'paid':'unpaid') ,
 		'innerHTML' => tagify(array(
 			'tag' => 'a',
@@ -424,7 +448,7 @@ function get_invoice_link($invoice) {
 			)
 		) . ' $' . $invoice['total']
 		)
-	);
+	) . get_edit_invoice_div($invoice);
 }
 
 function get_invoice_row(array $row_params, $id='') {

@@ -292,7 +292,7 @@ function filterRows() {
 function generateInvoice() {
 	var invoiceListUl = document.getElementById('invoice_list_ul');
 	var customerSelector = document.getElementById(
-			'invoicing_customer_selector'
+			'customer_selector_invoicing'
 			);
 	var invoiceMonth = document.getElementById('invoice_month').value;
 	var customerId = customerSelector.options[

@@ -398,7 +398,7 @@ $invoicing_customer_selector = get_customer_selector(
 		'name' => 'customer_id',
 		'required' => 'required'
 	),
-	'invoicing_'
+	'_invoicing'
 );
 
 $invoicing_month = inputify(
