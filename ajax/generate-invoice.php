@@ -34,72 +34,6 @@ $max_time = (clone $min_time);
 $max_time->modify('last day of this month');
 $max_time->setTime(23,59,59);
 $customer_id = $_POST['customer_id'];
-
-function new_line_item($project_id) {
-	$project = get_one_document(
-		'projects',
-		array(
-			'_id' => (new MongoId($project_id))
-		)
-	);
-	return array(
-		'project_name' => $project['project_name'],
-		'notes' => $project['project_notes'],
-		'price' => $project['project_price'],
-		'quantity' => 0,
-		'unit' => 'hour',
-	);
-}
-
-function seconds_to_hours_rounded($seconds) {
-	return round($seconds/(60*15))/4;
-}
-
-function get_invoice_rows($customer_id, $min_time, $max_time) {
-	$billable_times = get_all_documents(
-		'timer',
-		array(
-			'customer_id'=> $customer_id,
-			'start_time' => array(
-				'$gte' => prepare_datetime($min_time),
-				'$lte' => prepare_datetime($max_time)
-			)
-		)
-	);
-	$line_items = array();
-
-	foreach ($billable_times as $time) {
-		$interval = ($time['stop_time']->sec) - ($time['start_time']->sec);
-		if (!isset($line_items[$time['project_id']])) {
-			$line_items[$time['project_id']] = new_line_item($time['project_id']);
-		}
-		$line_items[$time['project_id']]['quantity'] += $interval;
-	}
-	
-	$total = 0;
-	$rows = '';
-
-	foreach ($line_items as $project_id => $item) {
-		$item['quantity'] = seconds_to_hours_rounded((float)$item['quantity']);
-		$item['sub_total'] =  (float)$item['price'] * (float)$item['quantity'];
-		$total += $item['sub_total'];
-		$rows .= get_invoice_row($item, 'proj_' . $project_id);
-	}
-
-	//allow for custom line items.
-	$line_items = get_all_documents('custom_rows', array(
-		'customer_id' => $_POST['customer_id'],
-		'time' => prepare_datetime($min_time)
-		)
-	);
-
-	foreach ($line_items as $item) {
-		$total += $item['sub_total'];
-		$rows .= get_invoice_row($item, 'custom_' . $item['_id']);
-	}
-	return array('rows' => $rows, 'total' => $total);
-}
-
 $invoice_rows = get_invoice_rows($customer_id, $min_time, $max_time);
 
 $total = $invoice_rows['total'];
@@ -114,19 +48,13 @@ $invoice_number	= $cust['invoice_prefix'] . '_' . $_POST['invoice_month'];
 //actual file path
 $file = INVOICE_DIR . $invoice_number . '.pdf';
 
-//create magic token... we'll use this to give secure links to customers without logins.
-$token = bin2hex(openssl_random_pseudo_bytes(32));
-$url = BASE_URL . '/invoice.php?token=' . $token;
-
 $params  = array(
 	'customer_id' => $customer_id,
 	'month' => new MongoDate($min_time->format('U')),
 	'invoice_number' => $invoice_number,
 	'paid' => false,
-	'url' => $url,
 	'file' => $file,
 	'total' => $total,
-	'token' => $token
 );
 
 //save invoice params in database
@@ -139,6 +67,11 @@ if ($doc) {
 	);
 	$params['_id'] = $doc['_id'];
 } else {
+	//create magic token... we'll use this to give secure links to customers without logins.
+	$token = bin2hex(openssl_random_pseudo_bytes(32));
+	$url = BASE_URL . '/invoice.php?token=' . $token;
+	$params['token'] = $token;
+	$params['url'] = $url;
 	$doc_id = insert_one_document('invoices', $params);
 	$params['_id'] = $doc_id;
 }
