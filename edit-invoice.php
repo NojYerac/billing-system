@@ -22,7 +22,8 @@ $csrf_passed = (
 
 ////////////////////////////////////////PRVENT UNAUTHORIZED ACCESS/////////////
 
-if (!isset($_SESSION['user_priv']) || $_SESSION['user_priv'] != 'Administrator') {
+if (!isset($_SESSION['user_priv']) ||
+  $_SESSION['user_priv'] != 'Administrator') {
 	http_response_code(302);
 	header('Location: ' . BASE_URL . 'login.php');
     echo 'Not Authorized';
@@ -35,7 +36,12 @@ if (!isset($_GET['invoice_id'])) {
 	exit();
 }
 
-$invoice = get_one_document('invoices', array('_id' => (new MongoId($_GET['invoice_id']))));
+$invoice = get_one_document(
+  'invoices',
+  array(
+    '_id' => (new MongoId($_GET['invoice_id']))
+  )
+);
 
 $min_time = date_create_from_format('U', $invoice['month']->sec);
 $max_time = (clone $min_time);
@@ -44,8 +50,64 @@ $max_time->setTime(23,59,59);
 $customer_id = $_POST['customer_id'];
 $invoice_rows = get_invoice_rows($invoice['customer_id'], $min_time, $max_time);
 
-foreach ($invoice_rows as $row) {
-	echo $row;
+$rows = "<tr><th>Project</th><th>Note</th><th>Quantity</th>" .
+  "<th>Price</th><th>Total</th></tr>" . $invoice_rows['rows'];
+
+$total = $invoice_rows['total'];
+
+$table = tagify(array(
+  'tag' => 'table',
+  'id' => 'invoice_table',
+  'class' => 'times',
+  'innerHTML' => $rows
+  )
+);
+
+$buttons = tagify(array(
+  'tag' => 'button',
+  'id' => 'record_payment_button',
+  'innerHTML' => 'Record payment'
+)) .tagify(array(
+  'tag' => 'button',
+  'id' => 'add_row_button',
+  'innerHTML' => 'Add row'
+)) . tagify(array(
+  'tag' => 'button',
+  'id' => 'cancle_button',
+  'innerHTML' => 'Cancle'
+)) . tagify(array(
+  'tag' => 'button',
+  'id' => 'save_button',
+  'innerHTML' => 'Save'
+));
+
+$feature_box = tagify(array(
+  'tag' => 'div',
+  'class' => 'feature-box',
+  'innerHTML' => $table . $buttons
+));
+
+//build page
+$head = get_default_head();
+
+$body = (
+  '<div class="header_placeholder">' .
+  '<div class="header">' .
+    "<h1>${invoice['invoice_number']}</h1>" .
+    tagify(
+        array(
+            'tag' => 'div',
+            'id' => 'emp_header',
+            'innerHTML' => $buttons
+        )
+    ) . '</div></div>' .
+    $feature_box
+);
+
+if (isset($status)) {
+    $body .= get_status_box($status);
 }
+
+echo get_document($head, $body, array());
 
 ?>
