@@ -66,18 +66,22 @@ $table = tagify(array(
 $buttons = tagify(array(
   'tag' => 'button',
   'id' => 'record_payment_button',
+  'onclick' => 'recordPayment()',
   'innerHTML' => 'Record payment'
 )) .tagify(array(
   'tag' => 'button',
   'id' => 'add_row_button',
+  'onclick' => 'addInvoiceRow()',
   'innerHTML' => 'Add row'
 )) . tagify(array(
   'tag' => 'button',
   'id' => 'cancle_button',
+  'onclick' => 'cancleEditInvoice()',
   'innerHTML' => 'Cancle'
 )) . tagify(array(
   'tag' => 'button',
   'id' => 'save_button',
+  'onclick' => 'saveInvoice()',
   'innerHTML' => 'Save'
 ));
 
@@ -87,21 +91,80 @@ $feature_box = tagify(array(
   'innerHTML' => $table . $buttons
 ));
 
+$add_row_div = tagify(array(
+  'tag' => 'div',
+  'id' => 'add_row_div',
+  'class' => 'status-box hidden',
+  'innerHTML' => formify(
+    'POST',
+    '#',
+    array(
+      inputify(
+        'text',
+        'project_name_input',
+        array('label' => 'Project: ')
+      ),  '<br/>',
+      inputify(
+        'text',
+        'project_notes_input',
+        array('label' => 'Notes: ')
+      ),  '<br/>',
+      inputify(
+        'number',
+        'project_price_input',
+        array('label' => 'Price: ')
+      ),  '<br/>',
+      inputify(
+        'text',
+        'project_unit_input',
+        array('label' => 'Unit: ')
+      ),  '<br/>',
+      inputify(
+        'number',
+        'project_quantity_input',
+        array('label' => 'Quantity: ')
+      ), '<br/>',
+      tagify(
+        array(
+          'tag' => 'button',
+          'id' => 'commit_row_button',
+          'onclick' => 'commitRow()',
+          'innerHTML' => 'Ok'
+        )
+      ), tagify(
+        array(
+          'tag' => 'button',
+          'id' => 'cancle_row_button',
+          'onclick' => 'cancleRow()',
+          'innerHTML' => 'Cancle'
+        )
+      )
+    ), array()
+  )
+));
+
+$edit_script = tagify(array(
+  'tag' => 'script',
+  'src' => 'js/edit-invoice.js'
+));
+
 //build page
 $head = get_default_head();
 
 $body = (
   '<div class="header_placeholder">' .
   '<div class="header">' .
-    "<h1>${invoice['invoice_number']}</h1>" .
-    tagify(
-        array(
-            'tag' => 'div',
-            'id' => 'emp_header',
-            'innerHTML' => $buttons
-        )
+  "<h1>${invoice['invoice_number']}</h1>" .
+  tagify(
+    array(
+      'tag' => 'div',
+      'id' => 'emp_header',
+      'innerHTML' => $buttons
+      )
     ) . '</div></div>' .
-    $feature_box
+    $feature_box .
+    $add_row_div .
+    $edit_script
 );
 
 if (isset($status)) {
