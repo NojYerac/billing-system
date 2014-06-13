@@ -24,8 +24,9 @@ function commitRow() {
 	var unit = document.getElementById('project_unit_input').value;
 	var quantity = document.getElementById('project_quantity_input').value;
 	cancleRow();
-	var params = "csrf_token=" + encodeURIComponent(csrfToken) +
-		"&name=" + encodeURIComponent(name) +
+	var params = "invoice_id=" + encodeURIComponent(invoiceId) +
+		"&csrf_token=" + encodeURIComponent(csrfToken) +
+		"&project_name=" + encodeURIComponent(name) +
 		"&notes=" +  encodeURIComponent(notes) +
 		"&price=" + encodeURIComponent(price) +
 		"&unit=" + encodeURIComponent(unit) +
@@ -39,11 +40,10 @@ function commitRow() {
 	}
 	xmlhttp.open(
 			'POST',
-			'ajax/edit-invoice.php?invoice_id=' + invoiceId,
+			'ajax/edit-invoice.php?action=add+row',
 			true
 	);
 	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.setRequestHeader("Content-length", params.length);
 	xmlhttp.send(params);
-	xmlhttp.close();
 }

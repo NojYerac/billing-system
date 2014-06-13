@@ -101,12 +101,12 @@ $add_row_div = tagify(array(
   'tag' => 'div',
   'id' => 'add_row_div',
   'class' => 'status-box center hidden',
-  'innerHTML' => 
+  'innerHTML' =>
   	  $csrf_input .
   	  inputify(
 		  'hidden',
 		  'invoice_id',
-		  array('value' => $invoice_id)
+		  array('value' => $_GET['invoice_id'])
 	  ) .
       inputify(
         'text',

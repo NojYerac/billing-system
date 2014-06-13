@@ -451,7 +451,7 @@ function get_invoice_link($invoice) {
 }
 
 function get_invoice_row(array $row_params, $id='') {
-	$row = "<tr" . ($id?" id=\"row_$id\"":"") . 
+	$row = "<tr" . ($id?" id=\"row_$id\"":"") .
 		"><td>${row_params['project_name']}</td><td>${row_params['notes']}</td>" .
 		"<td>${row_params['quantity']} ${row_params['unit']}(s)</td>" .
 		"<td>$${row_params['price']}/${row_params['unit']}</td>" .
@@ -499,7 +499,7 @@ function get_invoice_rows($customer_id, $min_time, $max_time) {
 		}
 		$line_items[$time['project_id']]['quantity'] += $interval;
 	}
-	
+
 	$total = 0;
 	$rows = '';
 
@@ -512,8 +512,8 @@ function get_invoice_rows($customer_id, $min_time, $max_time) {
 
 	//allow for custom line items.
 	$line_items = get_all_documents('custom_rows', array(
-		'customer_id' => $_POST['customer_id'],
-		'time' => prepare_datetime($min_time)
+		'customer_id' => $customer_id,
+		'month' => prepare_datetime($min_time)
 		)
 	);
 
