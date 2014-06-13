@@ -310,7 +310,7 @@ function get_status_box($status) {
     $status_box = tagify(array(
         'tag' => 'div',
         'id' => 'status_box',
-        'class' => 'status-box visible',
+        'class' => 'status-box center visible',
         'innerHTML' => $innerHTML
         )
     );

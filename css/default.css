@@ -149,13 +149,19 @@ table.times tr:nth-child(2n+1) {
 }
 
 div.status-box {
-	position: absolute;
-	top: 30%;
-	left:20%;
-    margin: 80px;
+	width: 30%;
     padding: 30px;
     border-radius: 10px;
 	border: 2px solid #333;
+}
+
+.center {
+	position: absolute;
+	top: 30%;
+	left: 0;
+	right: 0;
+    margin-left: auto;
+	margin-right: auto;
 }
 
 button.selected {

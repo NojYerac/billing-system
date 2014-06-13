@@ -20,6 +20,12 @@ $csrf_passed = (
     $old_csrf_token == $_POST['csrf_token']
 );
 
+$csrf_input = inputify(
+    'hidden',
+    'csrf_token',
+    array('value' => $new_csrf_token)
+);
+
 ////////////////////////////////////////PRVENT UNAUTHORIZED ACCESS/////////////
 
 if (!isset($_SESSION['user_priv']) ||
@@ -73,7 +79,7 @@ $buttons = tagify(array(
   'id' => 'add_row_button',
   'onclick' => 'addInvoiceRow()',
   'innerHTML' => 'Add row'
-)) . tagify(array(
+/*)) . tagify(array(
   'tag' => 'button',
   'id' => 'cancle_button',
   'onclick' => 'cancleEditInvoice()',
@@ -83,7 +89,7 @@ $buttons = tagify(array(
   'id' => 'save_button',
   'onclick' => 'saveInvoice()',
   'innerHTML' => 'Save'
-));
+ */));
 
 $feature_box = tagify(array(
   'tag' => 'div',
@@ -94,36 +100,39 @@ $feature_box = tagify(array(
 $add_row_div = tagify(array(
   'tag' => 'div',
   'id' => 'add_row_div',
-  'class' => 'status-box hidden',
-  'innerHTML' => formify(
-    'POST',
-    '#',
-    array(
+  'class' => 'status-box center hidden',
+  'innerHTML' => 
+  	  $csrf_input .
+  	  inputify(
+		  'hidden',
+		  'invoice_id',
+		  array('value' => $invoice_id)
+	  ) .
       inputify(
         'text',
         'project_name_input',
         array('label' => 'Project: ')
-      ),  '<br/>',
+      ) .  '<br/>' .
       inputify(
         'text',
         'project_notes_input',
         array('label' => 'Notes: ')
-      ),  '<br/>',
+      ) .  '<br/>' .
       inputify(
         'number',
         'project_price_input',
         array('label' => 'Price: ')
-      ),  '<br/>',
+      ) .  '<br/>' .
       inputify(
         'text',
         'project_unit_input',
         array('label' => 'Unit: ')
-      ),  '<br/>',
+      ) .  '<br/>' .
       inputify(
         'number',
         'project_quantity_input',
         array('label' => 'Quantity: ')
-      ), '<br/>',
+      ) . '<br/>' .
       tagify(
         array(
           'tag' => 'button',
@@ -131,7 +140,7 @@ $add_row_div = tagify(array(
           'onclick' => 'commitRow()',
           'innerHTML' => 'Ok'
         )
-      ), tagify(
+      ) . tagify(
         array(
           'tag' => 'button',
           'id' => 'cancle_row_button',
@@ -139,14 +148,26 @@ $add_row_div = tagify(array(
           'innerHTML' => 'Cancle'
         )
       )
-    ), array()
-  )
 ));
-
+/*
+$add_row_placeholder = tagify(array(
+	'tag' => 'div',
+	'id' => 'add_row_placeholder',
+	'class' => 'center',
+	'innerHTML' => $add_row_div
+));
+ */
 $edit_script = tagify(array(
   'tag' => 'script',
   'src' => 'js/edit-invoice.js'
 ));
+
+$header_buttons = '<div style="float:right">' .
+	'<a href="admin.php"><button>Admin interface</button></a>' .
+	'<a href="login.php?logout=true"><button>Logout</button></a>' .
+	'</div>';
+
+
 
 //build page
 $head = get_default_head();
@@ -158,8 +179,8 @@ $body = (
   tagify(
     array(
       'tag' => 'div',
-      'id' => 'emp_header',
-      'innerHTML' => $buttons
+      'id' => 'edit_invoice_header',
+      'innerHTML' => $header_buttons
       )
     ) . '</div></div>' .
     $feature_box .
