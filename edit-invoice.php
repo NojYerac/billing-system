@@ -59,7 +59,13 @@ $invoice_rows = get_invoice_rows($invoice['customer_id'], $min_time, $max_time);
 $rows = "<tr><th>Project</th><th>Note</th><th>Quantity</th>" .
   "<th>Price</th><th>Total</th></tr>" . $invoice_rows['rows'];
 
-$total = $invoice_rows['total'];
+$total = tagify(array(
+	'tag' => 'span',
+	'id' => 'invoice_total',
+	'innerHTML' => currency($invoice_rows['total'])
+));
+
+$total = "<h4>Total: $$total</h4>";
 
 $table = tagify(array(
   'tag' => 'table',
@@ -94,8 +100,74 @@ $buttons = tagify(array(
 $feature_box = tagify(array(
   'tag' => 'div',
   'class' => 'feature-box',
-  'innerHTML' => $table . $buttons
+  'innerHTML' => $table . $total . $buttons
 ));
+
+$edit_row_div = tagify(array(
+  'tag' => 'div',
+  'id' => 'edit_row_div',
+  'class' => 'status-box center hidden',
+  'innerHTML' =>
+  	  $csrf_input .
+  	  inputify(
+		  'hidden',
+		  'edit_invoice_id',
+		  array('value' => $_GET['invoice_id'])
+	  ) .
+	  inputify(
+		  'hidden',
+		  'row_id',
+		  array('value' => '0')
+	  ) . 
+      inputify(
+        'text',
+        'edit_project_name_input',
+        array('label' => 'Project: ')
+      ) .  '<br/>' .
+      inputify(
+        'text',
+        'edit_project_notes_input',
+        array('label' => 'Notes: ')
+      ) .  '<br/>' .
+      inputify(
+        'number',
+        'edit_project_price_input',
+        array('label' => 'Price: ')
+      ) .  '<br/>' .
+      inputify(
+        'text',
+        'edit_project_unit_input',
+        array('label' => 'Unit: ')
+      ) .  '<br/>' .
+      inputify(
+        'number',
+        'edit_project_quantity_input',
+        array('label' => 'Quantity: ')
+      ) . '<br/>' .
+      tagify(
+        array(
+          'tag' => 'button',
+          'id' => 'edit_commit_row_button',
+          'onclick' => 'commitEditRow()',
+          'innerHTML' => 'Ok'
+        )
+      ) . tagify(
+        array(
+          'tag' => 'button',
+          'id' => 'edit_delete_row_button',
+          'onclick' => 'deleteRow()',
+          'innerHTML' => 'Delete'
+        )
+	  ) . tagify(
+        array(
+          'tag' => 'button',
+          'id' => 'edit_cancle_row_button',
+          'onclick' => 'cancleEditRow()',
+          'innerHTML' => 'Cancle'
+        )
+      )
+  )
+);
 
 $add_row_div = tagify(array(
   'tag' => 'div',
@@ -148,15 +220,9 @@ $add_row_div = tagify(array(
           'innerHTML' => 'Cancle'
         )
       )
-));
-/*
-$add_row_placeholder = tagify(array(
-	'tag' => 'div',
-	'id' => 'add_row_placeholder',
-	'class' => 'center',
-	'innerHTML' => $add_row_div
-));
- */
+    )
+);
+
 $edit_script = tagify(array(
   'tag' => 'script',
   'src' => 'js/edit-invoice.js'
@@ -184,7 +250,8 @@ $body = (
       )
     ) . '</div></div>' .
     $feature_box .
-    $add_row_div .
+	$add_row_div .
+	$edit_row_div .
     $edit_script
 );
 

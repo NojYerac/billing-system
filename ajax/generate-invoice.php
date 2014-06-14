@@ -126,7 +126,8 @@ $html = "<body>" . $style .
 	$customer_contact .	$company_contact . "</div></div>" .
 	"<table style=\"width:100%;" .
 	"text-align:center;border:1px solid black\">$rows</table>" .
-	"<h4 style=\"margin-right:10%;text-align:right\">Total: $${invoice_rows['total']}</h4>" .
+	"<h4 style=\"margin-right:10%;text-align:right\">Total: $" .
+	currency($total) . "</h4>" .
 	"</body>";
 
 //convert html to pdf

@@ -242,7 +242,6 @@ function pprint($html) {
         "$1\n<"),
         $html);
     return $html;
-
 }
 
 function get_customer_selector(array $addnl_attrs=array(), $suffix='') {
@@ -257,6 +256,17 @@ function get_customer_selector(array $addnl_attrs=array(), $suffix='') {
 	);
 	$id = "customer_selector$suffix";
     return selectify($id, $customers, $addnl_attrs);
+}
+
+function currency($num) {
+	$num = round((float)$num, 2);
+	$dec_pos = strpos((string)$num, '.');
+	if (!$dec_pos) {
+		$num = $num . '.00';
+	} else {
+		$num = substr($num . 0, 0, $dec_pos + 3);
+	}
+	return $num;
 }
 
 function get_project_options($customer_id) {
@@ -452,10 +462,12 @@ function get_invoice_link($invoice) {
 
 function get_invoice_row(array $row_params, $id='') {
 	$row = "<tr" . ($id?" id=\"row_$id\"":"") .
+		($row_params['_id']?
+		"ondblclick=\"editInvoiceRow('${row_params['_id']}')\" ":"") .
 		"><td>${row_params['project_name']}</td><td>${row_params['notes']}</td>" .
 		"<td>${row_params['quantity']} ${row_params['unit']}(s)</td>" .
 		"<td>$${row_params['price']}/${row_params['unit']}</td>" .
-		"<td>$" . $row_params['sub_total'] . "</td></tr>";
+		"<td>$" . currency($row_params['sub_total']) . "</td></tr>";
 	return $row;
 }
 
