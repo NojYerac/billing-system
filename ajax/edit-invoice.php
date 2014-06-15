@@ -48,7 +48,7 @@ function add_invoice_row($invoice_id, array $params) {
 		'custom_rows',
 		$params
 	);
-	return get_invoice_row($params, "row_cust_$id");
+	return get_invoice_row($params, "custom_$id");
 }
 
 session_startup();
@@ -90,6 +90,11 @@ switch ($action) {
 					array('_id' => (new MongoId($invoice_id)))
         );
 		break;
+	case "delete row":
+		$status = delete_one_document(
+			'custom_rows',
+			array('_id' => (new MongoId($_POST['row_id'])))
+		);
     case "edit":
         $status = edit_invoice($invoice_id);
         break;

@@ -455,7 +455,7 @@ function get_invoice_link($invoice) {
 			'innerHTML' => "${invoice['invoice_number']}.pdf",
 			'id' => "invoice_link_${invoice['_id']}",
 			)
-		) . ' $' . $invoice['total']
+		) . ' $' . currency($invoice['total'])
 		)
 	) . get_edit_invoice_div($invoice);
 }

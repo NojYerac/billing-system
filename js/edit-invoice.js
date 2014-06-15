@@ -28,6 +28,8 @@ function deleteRow() {
 	var invoiceId = document.getElementById('invoice_id').value;
 	var invoiceTotal = document.getElementById('invoice_total');
 	var invoiceRow = document.getElementById('row_custom_' + rowId);
+	var subTotal = invoiceRow.lastChild.textContent.slice(1);
+	var invoiceTotal = document.getElementById('invoice_total');
 	cancleEditRow();
 	var params = "invoice_id=" + encodeURIComponent(invoiceId) +
 		"&csrf_token=" + encodeURIComponent(csrfToken) +
@@ -37,6 +39,7 @@ function deleteRow() {
 		if (this.readyState == 4 && this.status == 200) {
 			if (this.responseText != 'failed') {
 				invoiceRow.parentNode.removeChild(invoiceRow);
+				invoiceTotal.textContent = (parseFloat(invoiceTotal.textContent) - parseFloat(subTotal)).toFixed(2);
 			}
 		}
 	}
@@ -92,7 +95,7 @@ function commitRow() {
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			invoiceTable.innerHTML += this.responseText;
-			invoiceTotal.textContent = parseInt(invoiceTotal.textContent) + price * quantity;
+			invoiceTotal.textContent = (parseFloat(invoiceTotal.textContent) + price * quantity).toFixed(2);
 		}
 	}
 	xmlhttp.open(
