@@ -224,6 +224,50 @@ $add_row_div = tagify(array(
     )
 );
 
+$record_payment_div = tagify(array(
+  'tag' => 'div',
+  'id' => 'record_payment_div',
+  'class' => 'status-box center hidden',
+  'innerHTML' =>
+  	  $csrf_input .
+  	  inputify(
+		  'hidden',
+		  'invoice_id',
+		  array('value' => $_GET['invoice_id'])
+	  ) .
+      inputify(
+        'date',
+        'payment_date_input',
+        array('label' => 'Payment Date: ')
+      ) .  '<br/>' .
+      inputify(
+        'text',
+        'payment_notes_input',
+        array('label' => 'Notes: ')
+      ) .  '<br/>' .
+      inputify(
+        'number',
+        'ammount_paid_input',
+        array('label' => 'Ammount: ')
+      ) .  '<br/>' .
+       tagify(
+        array(
+          'tag' => 'button',
+          'id' => 'commit_payment_button',
+          'onclick' => 'commitPayment()',
+          'innerHTML' => 'Ok'
+        )
+      ) . tagify(
+        array(
+          'tag' => 'button',
+          'id' => 'cancle_payment_button',
+          'onclick' => 'canclePayment()',
+          'innerHTML' => 'Cancle'
+        )
+      )
+    )
+);
+
 $edit_script = tagify(array(
   'tag' => 'script',
   'src' => 'js/edit-invoice.js'
@@ -253,7 +297,8 @@ $body = (
     $feature_box .
 	$add_row_div .
 	$edit_row_div .
-    $edit_script
+	$record_payment_div .
+	$edit_script
 );
 
 if (isset($status)) {

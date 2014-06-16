@@ -1,4 +1,6 @@
-function recordPayment() {}
+function recordPayment() {
+	toggleVisible('record_payment_div');
+}
 
 function addInvoiceRow() {
 	toggleVisible('add_row_div');
