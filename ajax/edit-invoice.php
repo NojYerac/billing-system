@@ -1,8 +1,9 @@
 <?php
-include('../config.php');
-include('../db.php');
-include('../comp.php');
+require_once('../config.php');
+require_once('../db.php');
+require_once('../comp.php');
 require_once('../creds.php');
+require_once('../pdf.php');
 
 function edit_invoice($invoice_id) {
 	if (!isset($_POST['new_row'])) {
@@ -48,6 +49,7 @@ function add_invoice_row($invoice_id, array $params) {
 		'custom_rows',
 		$params
 	);
+	regenerate_invoice_by_id($invoice_id);
 	return get_invoice_row($params, "custom_$id");
 }
 
@@ -95,6 +97,7 @@ switch ($action) {
 			'custom_rows',
 			array('_id' => (new MongoId($_POST['row_id'])))
 		);
+		regenerate_invoice_by_id($invoice_id);
     case "edit":
         $status = edit_invoice($invoice_id);
         break;

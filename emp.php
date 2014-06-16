@@ -84,15 +84,6 @@ function edit_project($id, $name, $notes, $price) {
     );
 }		
 
-function check_reqd_post_params($reqd_params) {
-	foreach ($reqd_params as $param) {
-		if (!isset($_POST[$param]) || $_POST[$param] == '') {
-			return false;
-		}
-	}
-	return true;
-}
-
 //handle database changes...
 if (isset($_GET['action']) && $csrf_passed) {
     switch ($_GET['action']) {

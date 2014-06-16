@@ -3,6 +3,7 @@ require_once('config.php');
 require_once('db.php');
 require_once('comp.php');
 require_once('csrf.php');
+//require_once('pdf.php');
 require_once('creds.php');
 session_startup();
 
