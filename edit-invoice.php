@@ -247,7 +247,7 @@ $record_payment_div = tagify(array(
       ) .  '<br/>' .
       inputify(
         'number',
-        'ammount_paid_input',
+        'payment_ammount_input',
         array('label' => 'Ammount: ')
       ) .  '<br/>' .
        tagify(

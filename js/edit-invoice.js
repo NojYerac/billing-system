@@ -1,4 +1,20 @@
 function recordPayment() {
+	var invoiceTotal = document.getElementById('invoice_total').textContent;
+	var paymentDateInput = document.getElementById('payment_date_input');
+	var paymentAmmountInput = document.getElementById('payment_ammount_input');
+	paymentDateInput.value =  (new Date()).toISOString().slice(0,10);
+	paymentAmmountInput.value = invoiceTotal;
+	toggleVisible('record_payment_div');
+}
+
+function canclePayment() {
+	var invoiceTotal = document.getElementById('invoice_total').textContent;
+	var paymentDateInput = document.getElementById('payment_date_input');
+	var paymentAmmountInput = document.getElementById('payment_ammount_input');
+	var paymentNotesInput = document.getElementById('payment_notes_input');
+	paymentDateInput.value =  '';
+	paymentAmmountInput.value = '';
+	paymentNotesInput.value = '';
 	toggleVisible('record_payment_div');
 }
 
