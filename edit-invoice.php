@@ -54,8 +54,8 @@ $min_time = date_create_from_format('U', $invoice['month']->sec);
 $max_time = (clone $min_time);
 $max_time->modify('last day of this month');
 $max_time->setTime(23,59,59);
-$customer_id = $_POST['customer_id'];
-$invoice_rows = get_invoice_rows($invoice['customer_id'], $min_time, $max_time);
+$customer_id = $invoice['customer_id'];
+$invoice_rows = get_invoice_rows($customer_id, $min_time, $max_time);
 
 $rows = "<tr><th>Project</th><th>Note</th><th>Quantity</th>" .
   "<th>Price</th><th>Total</th></tr>" . $invoice_rows['rows'];

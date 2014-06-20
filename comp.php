@@ -462,7 +462,7 @@ function get_invoice_link($invoice) {
 
 function get_invoice_row(array $row_params, $id='') {
 	$row = "<tr" . ($id?" id=\"row_$id\"":"") .
-		($row_params['_id']?
+		(isset($row_params['_id'])?
 		"ondblclick=\"editInvoiceRow('${row_params['_id']}')\" ":"") .
 		"><td>${row_params['project_name']}</td><td>${row_params['notes']}</td>" .
 		"<td>${row_params['quantity']} ${row_params['unit']}(s)</td>" .
