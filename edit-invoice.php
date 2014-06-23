@@ -76,6 +76,38 @@ $table = tagify(array(
   )
 );
 
+$payment_rows = get_payment_rows($invoice);
+if (!$payment_rows) {
+	$payment_rows = array(
+		'rows' => '',
+		'balance' => $invoice_rows['total']
+	);
+	$visibility = 'hidden';
+} else {
+	$visibility = 'visible';
+}
+
+$payment_header_row = "<tr><th>Date</th><th>Notes</th>" .
+	"<th>Ammount</th></tr>";
+$payments = tagify(array(
+	'tag' => 'table',
+	'id' => 'invoice_payments_table',
+	'class' => 'payments ',
+	'innerHTML' => $payment_header_row . $payment_rows['rows']
+	)
+);
+
+$balance = "<h4>Balance: $<span id=\"payment_balance\">" .
+	$payment_rows['balance'] . "</span></h4>";
+
+$payments_div = tagify(array(
+	'tag' => 'div',
+	'id' => 'invoice_payments_div',
+	'class' => $visibility,
+	'innerHTML' => $payments . $balance
+	)
+);
+
 $buttons = tagify(array(
   'tag' => 'button',
   'id' => 'record_payment_button',
@@ -101,7 +133,7 @@ $buttons = tagify(array(
 $feature_box = tagify(array(
   'tag' => 'div',
   'class' => 'feature-box',
-  'innerHTML' => $table . $total . $buttons
+  'innerHTML' => $table . $total . $payments_div . $buttons
 ));
 
 $edit_row_div = tagify(array(
@@ -277,8 +309,6 @@ $header_buttons = '<div style="float:right">' .
 	'<a href="admin.php"><button>Admin interface</button></a>' .
 	'<a href="login.php?logout=true"><button>Logout</button></a>' .
 	'</div>';
-
-
 
 //build page
 $head = get_default_head();

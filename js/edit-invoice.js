@@ -8,7 +8,6 @@ function recordPayment() {
 }
 
 function canclePayment() {
-	var invoiceTotal = document.getElementById('invoice_total').textContent;
 	var paymentDateInput = document.getElementById('payment_date_input');
 	var paymentAmmountInput = document.getElementById('payment_ammount_input');
 	var paymentNotesInput = document.getElementById('payment_notes_input');
@@ -16,6 +15,40 @@ function canclePayment() {
 	paymentAmmountInput.value = '';
 	paymentNotesInput.value = '';
 	toggleVisible('record_payment_div');
+}
+
+function commitPayment() {
+	var paymentsDiv = document.getElementById('invoice_payments_div');
+	var paymentsDivClass = paymentsDiv.getAttribute('class', 2);
+	var paymentsTable = document.getElementById('invoice_payments_table');
+	var invoiceId = document.getElementById('invoice_id').value;
+	var csrfToken = document.getElementById('csrf_token').value;
+	var date = new Date(document.getElementById('payment_date_input').value);
+	var notes = document.getElementById('payment_notes_input').value;
+	var ammount = document.getElementById('payment_ammount_input').value;
+	var params = "invoice_id=" + encodeURIComponent(invoiceId) +
+		"&csrf_token=" + encodeURIComponent(csrfToken) +
+		"&date=" + encodeURIComponent(date.getTime()/1000)+
+		"&notes=" + encodeURIComponent(notes) +
+		"&ammount=" + encodeURIComponent(ammount);
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			if (/hidden/.test(paymentsDivClass)) {
+				paymentsDivClass = paymentsDivClass.replace(/hidden/, 'visible');
+				paymentsDiv.setAttribute('class', paymentsDivClass);
+			}
+			paymentsTable.firstChild.innerHTML += this.responseText;
+		}
+	}
+	xmlhttp.open(
+		'POST',
+		'ajax/edit-invoice.php?action=add+payment',
+		true
+	);
+	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("Content-length", params.length);
+	xmlhttp.send(params);
 }
 
 function addInvoiceRow() {
@@ -38,6 +71,47 @@ function editInvoiceRow(rowId) {
 	var field = document.getElementById('edit_project_quantity_input');
 	field.value = /[\d.]+/.exec(row.children[2].textContent);
 	document.getElementById('row_id').value = rowId;
+}
+
+function commitEditRow() {
+	var csrfToken = document.getElementById('csrf_token').value;
+	var invoiceId = document.getElementById('invoice_id').value;
+	var rowId = document.getElementById('row_id').value;
+	var name = document.getElementById('edit_project_name_input').value;
+	var notes = document.getElementById('edit_project_notes_input').value;
+	var price = document.getElementById('edit_project_price_input').value;
+	var unit = document.getElementById('edit_project_unit_input').value;
+	var quantity = document.getElementById('edit_project_quantity_input').value;
+	var oldSubtotalRow = document.getElementById('row_custom_' + rowId);
+	var oldSubtotal = parseFloat(oldSubtotalRow.lastChild.textContent.substr(1));
+	var invoiceTotal = document.getElementById('invoice_total');
+	cancleEditRow();
+	var params = "invoice_id=" + encodeURIComponent(invoiceId) +
+		"&row_id=" + encodeURIComponent(rowId) +
+		"&csrf_token=" + encodeURIComponent(csrfToken) +
+		"&project_name=" + encodeURIComponent(name) +
+		"&notes=" +  encodeURIComponent(notes) +
+		"&price=" + encodeURIComponent(price) +
+		"&unit=" + encodeURIComponent(unit) +
+		"&quantity=" + encodeURIComponent(quantity);
+	var invoiceTable = document.getElementById('invoice_table');
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			oldSubtotalRow.parentNode.removeChild(oldSubtotalRow);
+			invoiceTable.firstChild.innerHTML += this.responseText;
+			invoiceTotal.textContent = (parseFloat(invoiceTotal.textContent) +
+				   (price * quantity) - oldSubtotal).toFixed(2);
+		}
+	}
+	xmlhttp.open(
+			'POST',
+			'ajax/edit-invoice.php?action=edit+row',
+			true
+	);
+	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("Content-length", params.length);
+	xmlhttp.send(params);
 }
 
 function deleteRow() {
@@ -112,7 +186,7 @@ function commitRow() {
 	var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			invoiceTable.innerHTML += this.responseText;
+			invoiceTable.firstChild.innerHTML += this.responseText;
 			invoiceTotal.textContent = (parseFloat(invoiceTotal.textContent) + price * quantity).toFixed(2);
 		}
 	}

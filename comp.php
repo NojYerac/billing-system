@@ -471,6 +471,35 @@ function get_invoice_row(array $row_params, $id='') {
 	return $row;
 }
 
+function get_payment_rows(array $invoice_params) {
+	$payments = get_all_documents(
+		'payments',
+		array('invoice_id' => (string)$invoice_params['_id'])
+	);
+	if (!$payments) { return false; }
+	$rows = '';
+	$balance = $invoice_params['total'];
+	foreach ($payments as $payment) {
+		$balance -= $payment['ammount'];
+		$rows .= get_payment_row($payment);
+	}
+	return array('rows' => $rows, 'balance' => $balance);
+}
+
+function get_payment_row($payment_params) {
+	$ammount = "$" . currency($payment_params['ammount']);
+	$date = date_create_from_format('U', $payment_params['date']->sec);
+	$date = $date->format('Y-M-d');
+	$notes = htmlentities($payment_params['notes']);
+	$row = "<tr id=\"row_payment_${payment_params['_id']}\"" .
+		"ondblclick=\"editPayment('${payment_params['_id']}')\">" .
+		"<td>$date</td>" . 
+		"<td>$notes</td>" . 
+		"<td>$ammount</td>" . 
+		"</tr>";
+	return $row;
+}
+
 function new_line_item($project_id) {
 	$project = get_one_document(
 		'projects',

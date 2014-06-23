@@ -53,6 +53,53 @@ function add_invoice_row($invoice_id, array $params) {
 	return get_invoice_row($params, "custom_$id");
 }
 
+function edit_invoice_row($invoice_id, array $params) {
+	if (!isset($params['row_id'])) {
+		return false;
+	} else {
+		$row_id = new MongoId($params['row_id']);
+	}
+	$invoice_params = get_one_document(
+		'invoices',
+		array('_id' => (new MongoId($invoice_id)))
+	);
+	foreach (array('invoice_id', 'csrf_token', 'row_id') as $param) {
+		if (isset($params[$param])) {
+			unset($params[$param]);
+		}
+	}
+	foreach(array('customer_id', 'month') as $param) {
+		if (!isset($params[$param]) && (isset($invoice_params[$param]))) {
+			$params[$param] = $invoice_params[$param];
+		}
+	}
+	if (!isset($params['notes']) || gettype($params['notes']) != 'string') {
+		$params['notes'] = '';
+	}
+	if (isset($params['price']) && isset($params['quantity'])) {
+		$params['sub_total'] = (float)$params['price'] * (float)$params['quantity'];
+	} else {
+		foreach (array('price', 'quantity', 'sub_total') as $param) {
+			$params[$param] = 0;
+		}
+	}
+	update_one_document(
+		'custom_rows',
+		array('_id' => $row_id),
+		$params
+	);
+	regenerate_invoice_by_id($invoice_id);
+	$params['_id'] = $row_id; //make sure we get the ondblclick attribute
+	return get_invoice_row($params, "custom_$row_id");
+}
+
+function add_invoice_payment($invoice_id, $payment_params) {
+	$payment_params['invoice_id'] = $invoice_id;
+	$payment_params['date'] = new MongoDate($payment_params['date']);
+	insert_one_document('payments', $payment_params);
+	return get_payment_row($payment_params);
+}
+
 session_startup();
 
 if (!isset($_SESSION['user_login']) || !isset($_SESSION['user_priv']) ||
@@ -101,11 +148,18 @@ switch ($action) {
     case "edit":
         $status = edit_invoice($invoice_id);
         break;
-		case "add row":
-		    $status = add_invoice_row($invoice_id, $_POST);
-				break;
-    default:
-        $status = false;
+	case "add row":
+		$status = add_invoice_row($invoice_id, $_POST);
+		break;
+	case "edit row":
+		$status = edit_invoice_row($invoice_id, $_POST);
+		break;
+	case "add payment":
+		$status = add_invoice_payment($invoice_id, $_POST);
+		break;
+	default:
+		http_response_code(500);
+        $status = "invalid action";
         break;
 }
 
