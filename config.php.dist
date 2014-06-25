@@ -10,7 +10,7 @@ define('DB_PASS',    'db_password');
 
 define('DB_NAME',    'db_name');
 
-define('VERSION',    'Billing_system/v0.1');
+define('VERSION',    'Billing_system/v1.0');
 
 define('TITLE',      'Billing system');
 

@@ -457,12 +457,12 @@ function get_invoice_link($invoice) {
 		'innerHTML' => tagify(array(
 			'tag' => 'a',
 			//'target' => '_blank',
-			'class' => 'invoice_link ' . ($invoice['paid']?'paid':'unpaid'),
+			'class' => 'invoice_link ' . $paid,
 			'href' => $invoice['url'],
 			'innerHTML' => "${invoice['invoice_number']}.pdf",
 			'id' => "invoice_link_${invoice['_id']}",
 			)
-		) . ' $' . currency($invoice['total'])
+		) . ' $' . currency($invoice['total']) . " $paid"
 		)
 	) . get_edit_invoice_div($invoice);
 }

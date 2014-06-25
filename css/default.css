@@ -239,17 +239,17 @@ button.selected {
 	vertical-align: middle;
 }
 
-a.invoice_link:link  {
+a.invoice_link.unpaid:link  {
 	color: #03C;
 	text-decoration: none;
 }
 
-a.invoice_link:visited {
+a.invoice_link.unpaid:visited {
 	color: #03C;
 	text-decoration: none;
 }
 
-a.invoice_link:hover {
+a.invoice_link.unpaid:hover {
 	color: #03C;
 	text-decoration: underline;
 }
@@ -260,6 +260,10 @@ a.invoice_link:hover {
 
 li.paid {
 	text-decoration: line-through;
+}
+
+li.overdue {
+	color: #F30;
 }
 
 /* IDs */
