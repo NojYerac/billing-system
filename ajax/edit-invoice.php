@@ -129,9 +129,9 @@ $action = $_GET['action'];
 
 switch ($action) {
 	case "mark paid":
-		$status = updat_one_document('invoices',
+		$status = update_one_document('invoices',
 			array('_id' => (new MongoId($invoice_id))),
-			array('$set' => array('paid' => 'true'))
+			array('paid' => ($_POST['paid'] == "1"))
 		);
 		break;
     case "delete":

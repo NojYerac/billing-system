@@ -39,6 +39,8 @@ function commitPayment() {
 				paymentsDiv.setAttribute('class', paymentsDivClass);
 			}
 			paymentsTable.firstChild.innerHTML += this.responseText;
+			canclePayment();
+			editBalance(-(ammount));
 		}
 	}
 	xmlhttp.open(
@@ -50,6 +52,49 @@ function commitPayment() {
     xmlhttp.setRequestHeader("Content-length", params.length);
 	xmlhttp.send(params);
 }
+
+function checkBalance() {
+	editBalance(0);
+}
+
+function editBalance(ammount) {
+	var balanceSpan = document.getElementById('payment_balance');
+	var balance = (parseFloat(balanceSpan.textContent) + ammount).toFixed(2);
+	balanceSpan.textContent = balance;
+	//disable add payment button when balance <= 0.
+	var paymentButton = document.getElementById('record_payment_button');
+	if (balance <= 0) {
+		paymentButton.disabled = true;
+		markPaid(true);
+	} else {
+		paymentButton.disabled = false;
+		markPaid(false);
+	}
+}
+
+function markPaid(paid) {
+	var invoiceId = document.getElementById('invoice_id').value;
+	var csrfToken = document.getElementById('csrf_token').value;
+	var params = "invoice_id=" + encodeURIComponent(invoiceId) +
+		"&csrf_token=" + encodeURIComponent(csrfToken) +
+		"&paid=" + (paid?"1":"0");
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			console.log(this.responseText);
+		}
+	}
+	xmlhttp.open(
+		'POST',
+		'ajax/edit-invoice.php?action=mark+paid',
+		true
+	);
+	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("Content-length", params.length);
+	xmlhttp.send(params);
+}
+
+
 
 function addInvoiceRow() {
 	toggleVisible('add_row_div');
@@ -102,6 +147,7 @@ function commitEditRow() {
 			invoiceTable.firstChild.innerHTML += this.responseText;
 			invoiceTotal.textContent = (parseFloat(invoiceTotal.textContent) +
 				   (price * quantity) - oldSubtotal).toFixed(2);
+			editBalance(price * quantity);
 		}
 	}
 	xmlhttp.open(
@@ -131,7 +177,9 @@ function deleteRow() {
 		if (this.readyState == 4 && this.status == 200) {
 			if (this.responseText != 'failed') {
 				invoiceRow.parentNode.removeChild(invoiceRow);
-				invoiceTotal.textContent = (parseFloat(invoiceTotal.textContent) - parseFloat(subTotal)).toFixed(2);
+ 				var adjustment = parseFloat(subTotal);
+				invoiceTotal.textContent = (parseFloat(invoiceTotal.textContent) - adjustment).toFixed(2);
+				editBalance(-(adjustment));
 			}
 		}
 	}
@@ -188,6 +236,7 @@ function commitRow() {
 		if (this.readyState == 4 && this.status == 200) {
 			invoiceTable.firstChild.innerHTML += this.responseText;
 			invoiceTotal.textContent = (parseFloat(invoiceTotal.textContent) + price * quantity).toFixed(2);
+			editBalance(price * quantity);
 		}
 	}
 	xmlhttp.open(

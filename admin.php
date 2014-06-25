@@ -438,7 +438,7 @@ $invoicing_form = formify(
 
 $admin_forms['invoicing'] = array(
     'title' => 'Invoicing',
-    'innerHTML' => $invoice_list . '<hr/>' . $invoicing_form
+    'innerHTML' => $invoicing_form . '<hr/>' . $invoice_list
 );
 
 //create buttons and forms

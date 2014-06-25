@@ -57,6 +57,12 @@ button, input[type="submit"] {
 	border: 2px solid #333
 }
 
+button:disabled {
+	background-color: #DDD;
+	color: #555;
+	border: 2px solid #555;
+}
+
 ol {
     text-align: left;
 }
@@ -134,6 +140,31 @@ table.times tr:nth-child(2n+1) {
     color: #222;
     }
 
+table.payments {
+    width:98%;
+    margin: 1%;
+    text-align: center;
+    }
+
+table.payments th {
+    background-color: #555;
+    border: 1px solid #555;
+    color: #EEE;
+    padding: 3px;
+    vertical-align: top;
+    }
+
+table.payments tr:nth-child(2n) {
+    background-color: #EEE;
+    color: #555;
+    }
+
+table.payments tr:nth-child(2n+1) {
+    background-color: #CCC;
+    color: #222;
+    }
+
+
 .feature-box {
     background-color: #EEE;
     color: #333;
@@ -197,8 +228,6 @@ button.selected {
 	width: 98%;
 	padding-left: 1%;
 	padding-right: 1%;
-	border-bottom-right-radius: 10px;
-	border-bottom-left-radius: 10px;
 }
 
 .header_placeholder {
@@ -210,6 +239,28 @@ button.selected {
 	vertical-align: middle;
 }
 
+a.invoice_link:link  {
+	color: #03C;
+	text-decoration: none;
+}
+
+a.invoice_link:visited {
+	color: #03C;
+	text-decoration: none;
+}
+
+a.invoice_link:hover {
+	color: #03C;
+	text-decoration: underline;
+}
+
+.invoice_li:hover {
+	background-color: #DDD;
+}
+
+li.paid {
+	text-decoration: line-through;
+}
 
 /* IDs */
 
@@ -223,7 +274,3 @@ button.selected {
     }
 
 
-/*#poem {
-    text-align: center;
-    font-size: 14em;
-}*/

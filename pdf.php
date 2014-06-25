@@ -13,6 +13,9 @@ function regenerate_invoice_by_id($invoice_id) {
 }
 
 function generate_invoice($customer_id, $min_time, $max_time) {
+	$due_time = (clone $max_time);
+	$due_time->modify('+10 days');
+
 	$invoice_rows = get_invoice_rows($customer_id, $min_time, $max_time);
 
 	$total = $invoice_rows['total'];
@@ -23,7 +26,7 @@ function generate_invoice($customer_id, $min_time, $max_time) {
 
 	$invoice_month = $min_time->format('Y-M');
 
-	$invoice_number	= $cust['invoice_prefix'] . '_' . $invoice_month;
+	$invoice_number	= $cust['invoice_prefix'] . '_' . $min_time->format('Ym');
 
 
 	//actual file path
@@ -32,6 +35,7 @@ function generate_invoice($customer_id, $min_time, $max_time) {
 	$params  = array(
 		'customer_id' => $customer_id,
 		'month' => new MongoDate($min_time->format('U')),
+		'due' => new MongoDate($due_time->format('U')),
 		'invoice_number' => $invoice_number,
 		'paid' => false,
 		'file' => $file,
@@ -101,6 +105,7 @@ function generate_invoice($customer_id, $min_time, $max_time) {
 		"<div><h1 style=\"text-align:center\">" .
 		"Invoice for " . $pretty_month .
 		"</h1><h4>Invoice number: " . htmlentities($invoice_number) . "</h4>" .
+		"<p>Payment due: <em>" . $due_time->format('F jS, Y') . "</em></p>" .
 		"<div id=\"contact_container\" " .
 		"style=\"width:100%\">" .
 		$customer_contact .	$company_contact . "</div></div>" .

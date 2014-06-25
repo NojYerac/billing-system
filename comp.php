@@ -442,11 +442,18 @@ function get_edit_invoice_div($invoice) {
 }
 
 function get_invoice_link($invoice) {
+	if ($invoice['paid']) {
+		$paid = 'paid';
+	} else {
+		$now = (int)((new DateTime())->format('U'));
+		$due = $invoice['month']->sec + (10 * 24 * 60 * 60);
+		$paid = ($now < $due)?"unpaid":"overdue";
+	}
 	return tagify(array(
 		'tag' => 'li',
 		'id' => "invoice_li_${invoice['_id']}",
 		'onclick' => "toggleVisible('edit_invoice_div_${invoice['_id']}')",
-		'class' => 'invoice_li ' . ($invoice['paid']?'paid':'unpaid') ,
+		'class' => 'invoice_li ' . $paid,
 		'innerHTML' => tagify(array(
 			'tag' => 'a',
 			//'target' => '_blank',
@@ -463,7 +470,7 @@ function get_invoice_link($invoice) {
 function get_invoice_row(array $row_params, $id='') {
 	$row = "<tr" . ($id?" id=\"row_$id\"":"") .
 		(isset($row_params['_id'])?
-		"ondblclick=\"editInvoiceRow('${row_params['_id']}')\" ":"") .
+		"onclick=\"editInvoiceRow('${row_params['_id']}')\" ":"") .
 		"><td>${row_params['project_name']}</td><td>${row_params['notes']}</td>" .
 		"<td>${row_params['quantity']} ${row_params['unit']}(s)</td>" .
 		"<td>$${row_params['price']}/${row_params['unit']}</td>" .
@@ -492,7 +499,7 @@ function get_payment_row($payment_params) {
 	$date = $date->format('Y-M-d');
 	$notes = htmlentities($payment_params['notes']);
 	$row = "<tr id=\"row_payment_${payment_params['_id']}\"" .
-		"ondblclick=\"editPayment('${payment_params['_id']}')\">" .
+		"onclick=\"editPayment('${payment_params['_id']}')\">" .
 		"<td>$date</td>" . 
 		"<td>$notes</td>" . 
 		"<td>$ammount</td>" . 

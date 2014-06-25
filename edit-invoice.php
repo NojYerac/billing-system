@@ -98,13 +98,13 @@ $payments = tagify(array(
 );
 
 $balance = "<h4>Balance: $<span id=\"payment_balance\">" .
-	$payment_rows['balance'] . "</span></h4>";
+	currency($payment_rows['balance']) . "</span></h4>";
 
 $payments_div = tagify(array(
 	'tag' => 'div',
 	'id' => 'invoice_payments_div',
 	'class' => $visibility,
-	'innerHTML' => $payments . $balance
+	'innerHTML' => '<h4>Payments</h4>' . $payments . $balance
 	)
 );
 
@@ -334,6 +334,8 @@ $body = (
 if (isset($status)) {
     $body .= get_status_box($status);
 }
+
+$body = get_body($body, array('onload' => 'checkBalance()'));
 
 echo get_document($head, $body, array());
 
