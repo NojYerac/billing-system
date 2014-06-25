@@ -446,7 +446,7 @@ function get_invoice_link($invoice) {
 		$paid = 'paid';
 	} else {
 		$now = (int)((new DateTime())->format('U'));
-		$due = $invoice['month']->sec + (10 * 24 * 60 * 60);
+		$due = $invoice['due']->sec;
 		$paid = ($now < $due)?"unpaid":"overdue";
 	}
 	return tagify(array(
