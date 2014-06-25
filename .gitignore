@@ -5,6 +5,5 @@ config.php
 .htaccess
 php.ini
 php_errors
-favicon.ico
 *.pdf
 mpdf
