@@ -1,9 +1,4 @@
 <?php
-require_once('../config.php');
-require_once('../db.php');
-require_once('../comp.php');
-require_once('../creds.php');
-require_once('../pdf.php');
 
 function edit_invoice($invoice_id) {
 	if (!isset($_POST['new_row'])) {
@@ -21,10 +16,12 @@ function get_edit_invoice_interface($invoice_id) {
 }
 
 function add_invoice_row($invoice_id, array $params) {
-	$invoice_params = get_one_document(
-		'invoices',
-		array('_id' => (new MongoId($invoice_id)))
-	);
+	if ($invoice_id != '') {
+		$invoice_params = get_one_document(
+			'invoices',
+			array('_id' => (new MongoId($invoice_id)))
+		);
+	}
 	foreach (array('invoice_id', 'csrf_token') as $param) {
 		if (isset($params[$param])) {
 			unset($params[$param]);
@@ -49,7 +46,7 @@ function add_invoice_row($invoice_id, array $params) {
 		'custom_rows',
 		$params
 	);
-	regenerate_invoice_by_id($invoice_id);
+	if ($invoice_id) {regenerate_invoice_by_id($invoice_id);}
 	return get_invoice_row($params, "custom_$id");
 }
 
@@ -100,73 +97,82 @@ function add_invoice_payment($invoice_id, $payment_params) {
 	return get_payment_row($payment_params);
 }
 
-session_startup();
+if(count(debug_backtrace()) == 0) {
+	
+	require_once('../config.php');
+	require_once('../db.php');
+	require_once('../comp.php');
+	require_once('../creds.php');
+	require_once('../pdf.php');
 
-if (!isset($_SESSION['user_login']) || !isset($_SESSION['user_priv']) ||
-   $_SESSION['user_priv'] != 'Administrator') {
-    http_response_code(401);
-    echo "Not Authorized";
-    exit();
-}
+	session_startup();
 
-if (!isset($_POST['csrf_token']) ||
-	!isset($_SESSION['csrf_token']) ||
-    $_POST['csrf_token'] != $_SESSION['csrf_token']) {
-    http_response_code(500);
-    echo "CSRF check failed!";
-    exit();
-}
+	if (!isset($_SESSION['user_login']) || !isset($_SESSION['user_priv']) ||
+	   $_SESSION['user_priv'] != 'Administrator') {
+		http_response_code(401);
+		echo "Not Authorized";
+		exit();
+	}
 
-if (!isset($_POST['invoice_id']) || !isset($_GET['action'])) {
-    http_response_code(500);
-    echo "Missing required params";
-    exit();
-}
-
-$invoice_id = $_POST['invoice_id'];
-$action = $_GET['action'];
-
-
-switch ($action) {
-	case "mark paid":
-		$status = update_one_document('invoices',
-			array('_id' => (new MongoId($invoice_id))),
-			array('paid' => ($_POST['paid'] == "1"))
-		);
-		break;
-    case "delete":
-        $status = delete_one_document('invoices',
-					array('_id' => (new MongoId($invoice_id)))
-        );
-		break;
-	case "delete row":
-		$status = delete_one_document(
-			'custom_rows',
-			array('_id' => (new MongoId($_POST['row_id'])))
-		);
-		regenerate_invoice_by_id($invoice_id);
-    case "edit":
-        $status = edit_invoice($invoice_id);
-        break;
-	case "add row":
-		$status = add_invoice_row($invoice_id, $_POST);
-		break;
-	case "edit row":
-		$status = edit_invoice_row($invoice_id, $_POST);
-		break;
-	case "add payment":
-		$status = add_invoice_payment($invoice_id, $_POST);
-		break;
-	default:
+	if (!isset($_POST['csrf_token']) ||
+		!isset($_SESSION['csrf_token']) ||
+		$_POST['csrf_token'] != $_SESSION['csrf_token']) {
 		http_response_code(500);
-        $status = "invalid action";
-        break;
-}
+		echo "CSRF check failed!";
+		exit();
+	}
 
-if ($status) {
-    echo (gettype($status) == 'string')?$status:"success";
-} else {
-    echo "failed";
-}
+	if (!isset($_POST['invoice_id']) || !isset($_GET['action'])) {
+		http_response_code(500);
+		echo "Missing required params";
+		exit();
+	}
 
+	$invoice_id = $_POST['invoice_id'];
+	$action = $_GET['action'];
+
+
+	switch ($action) {
+		case "mark paid":
+			$status = update_one_document('invoices',
+				array('_id' => (new MongoId($invoice_id))),
+				array('paid' => ($_POST['paid'] == "1"))
+			);
+			break;
+		case "delete":
+			$status = delete_one_document('invoices',
+						array('_id' => (new MongoId($invoice_id)))
+			);
+			break;
+		case "delete row":
+			$status = delete_one_document(
+				'custom_rows',
+				array('_id' => (new MongoId($_POST['row_id'])))
+			);
+			regenerate_invoice_by_id($invoice_id);
+		case "edit":
+			$status = edit_invoice($invoice_id);
+			break;
+		case "add row":
+			$status = add_invoice_row($invoice_id, $_POST);
+			break;
+		case "edit row":
+			$status = edit_invoice_row($invoice_id, $_POST);
+			break;
+		case "add payment":
+			$status = add_invoice_payment($invoice_id, $_POST);
+			break;
+		default:
+			http_response_code(500);
+			$status = "invalid action";
+			break;
+	}
+
+	if ($status) {
+		echo (gettype($status) == 'string')?$status:"success";
+	} else {
+		echo "failed";
+	}
+
+}
 ?>
