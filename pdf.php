@@ -13,7 +13,8 @@ function regenerate_invoice_by_id($invoice_id) {
 }
 
 function generate_invoice($customer_id, $min_time, $max_time) {
-	$due_time = (clone $max_time);
+	$due_time = (new DateTime());
+	$due_time->setTime(0,0,0);
 	$due_time->modify('+10 days');
 
 	$invoice_rows = get_invoice_rows($customer_id, $min_time, $max_time);
