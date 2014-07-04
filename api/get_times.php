@@ -13,8 +13,7 @@ if (!isset($_SESSION['user_priv']) ||
         $_SESSION['user_priv'],
         array('Administrator', 'Employee')
     )) {
-	http_response_code(302);
-	header('Location: ' . BASE_URL . 'login.php');
+	http_response_code(401);
     echo 'Not Authorized';
     exit();
 }
