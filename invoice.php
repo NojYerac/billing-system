@@ -5,7 +5,7 @@ require_once('config.php');
 require_once('db.php');
 
 ////////////////////////////////////////DOWNLOAD INVOICE///////////////////////
-if (isset($_GET['token'])) {
+if (isset($_GET['token']) && is_string($_GET['token'])) {
 	$doc = get_one_document('invoices', array('token' => $_GET['token']));
 	if ($doc) {
 		$filename = basename($doc['file']);
