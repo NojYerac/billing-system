@@ -94,6 +94,7 @@ function add_invoice_payment($invoice_id, $payment_params) {
 	$payment_params['invoice_id'] = $invoice_id;
 	$payment_params['date'] = new MongoDate($payment_params['date']);
 	insert_one_document('payments', $payment_params);
+	regenerate_invoice_by_id($invoice_id);
 	return get_payment_row($payment_params);
 }
 

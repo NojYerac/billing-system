@@ -2,21 +2,22 @@
 require_once('mpdf/mpdf.php');
 require_once('db.php');
 
-function regenerate_invoice_by_id($invoice_id) {
+function regenerate_invoice_by_id($invoice_id, $due_time=false) {
 	$invoice = get_one_document('invoices', array('_id' => (new MongoId($invoice_id))));
 	$min_time = date_create_from_format('U', $invoice['month']->sec);
 	$max_time = (clone $min_time);
 	$max_time->modify('last day of this month');
 	$max_time->setTime(23,59,59);
 	$customer_id = $invoice['customer_id'];
-	return generate_invoice($customer_id, $min_time, $max_time);
+	return generate_invoice($customer_id, $min_time, $max_time, $due_time, $invoice_id);
 }
 
-function generate_invoice($customer_id, $min_time, $max_time) {
-	$due_time = (new DateTime());
-	$due_time->setTime(0,0,0);
-	$due_time->modify('+10 days');
-
+function generate_invoice($customer_id, $min_time, $max_time, $due_time=false, $invoice_id=false) {
+	if (!$due_time) {
+		$due_time = (new DateTime());
+		$due_time->setTime(0,0,0);
+		$due_time->modify('+10 days');
+	}
 	$invoice_rows = get_invoice_rows($customer_id, $min_time, $max_time);
 
 	$total = $invoice_rows['total'];
@@ -101,6 +102,29 @@ function generate_invoice($customer_id, $min_time, $max_time) {
 	//F = full month name
 	$pretty_month = $min_time->format('F, Y');
 
+	//payments
+	$payment_table = '';
+	if ($invoice_id) {
+		$payments = get_all_documents('payments', array('invoice_id' => $invoice_id));
+		if ($payments) {
+			$balance = $total;
+			$payment_rows = '<tr><th>Date</th><th>Notes</th><th>Ammount</th></tr>';
+			foreach($payments as $payment) {
+				$pay_date = date_create_from_format('U', $payment['date']->sec);
+				$pay_note = htmlentities($payment['notes']);
+				$pay_ammount = currency($payment['ammount']);
+				$balance = $total - $payment['ammount'];
+				$payment_rows .= "<tr><td>" . $pay_date->format('d-m-Y') . "</td><td>$pay_note</td><td>$$pay_ammount</td></tr>";
+			}
+			$payment_table = "<table style=\"width:100%;" .
+				"text-align:center;border:1px solid black\">" .
+				$payment_rows .
+				"</table>" .
+				"<h4 style=\"margin-right:10%;text-align:right\">Balance: $" .
+				currency($balance) . "</h4>";
+		}
+	}
+
 	//build_html
 	$html = "<body>" . $style .
 		"<div><h1 style=\"text-align:center\">" .
@@ -113,8 +137,9 @@ function generate_invoice($customer_id, $min_time, $max_time) {
 		"<table style=\"width:100%;" .
 		"text-align:center;border:1px solid black\">$rows</table>" .
 		"<h4 style=\"margin-right:10%;text-align:right\">Total: $" .
-		currency($total) . "</h4>" .
-		"</body>";
+		currency($total) . "</h4>";
+	$html .= $payment_table?$payment_table:"";
+	$html .= "</body>";
 
 	//convert html to pdf
 	$mpdf = new mPDF('utf-8', 'letter');
