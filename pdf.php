@@ -108,13 +108,13 @@ function generate_invoice($customer_id, $min_time, $max_time, $due_time=false, $
 		$payments = get_all_documents('payments', array('invoice_id' => $invoice_id));
 		if ($payments) {
 			$balance = $total;
-			$payment_rows = '<tr><th>Date</th><th>Notes</th><th>Ammount</th></tr>';
+			$payment_rows = '<tr><th>Date</th><th>Notes</th><th>Amount</th></tr>';
 			foreach($payments as $payment) {
 				$pay_date = date_create_from_format('U', $payment['date']->sec);
 				$pay_note = htmlentities($payment['notes']);
 				$pay_ammount = currency($payment['ammount']);
 				$balance = $total - $payment['ammount'];
-				$payment_rows .= "<tr><td>" . $pay_date->format('d-m-Y') . "</td><td>$pay_note</td><td>$$pay_ammount</td></tr>";
+				$payment_rows .= "<tr><td>" . $pay_date->format('m/d/Y') . "</td><td>$pay_note</td><td>$$pay_ammount</td></tr>";
 			}
 			$payment_table = "<table style=\"width:100%;" .
 				"text-align:center;border:1px solid black\">" .
